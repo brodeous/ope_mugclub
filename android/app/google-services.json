@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "978173016943",
+    "project_id": "mug-club-project",
+    "storage_bucket": "mug-club-project.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:978173016943:android:54141e26a094b3f8fd869a",
+        "android_client_info": {
+          "package_name": "com.example.ope_mugclub"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "978173016943-ina8ptgihanlerc2kr3ur4dedel8g8ru.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCFjmltqI7e3wNZK6vj3II4HS1f83piNyw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "978173016943-ina8ptgihanlerc2kr3ur4dedel8g8ru.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

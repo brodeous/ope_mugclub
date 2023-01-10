@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 import './src/pages/homepage.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
 
+  final Future<FirebaseApp> _fbApp = Firebase.initializeApp();
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'OPE-MugClub',
+      title: 'OPE Mug Club',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -25,7 +28,20 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.teal,
       ),
-      home: const MyHomePage(),
+      home: FutureBuilder(
+          future: _fbApp,
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+                return Text('Something went wrong! ${snapshot.error.toString()}');
+            } else if (snapshot.hasData) {
+                return const MyHomePage();
+            } else {
+                return const Center(
+                    child: CircularProgressIndicator(),
+                );
+            }
+        },
+      )
     );
   }
 }

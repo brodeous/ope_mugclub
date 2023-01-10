@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:ope_mugclub/src/components/qr_scanner.dart';
+import 'package:firebase_database/firebase_database.dart';
+import './new_member_page.dart';
+import './return_member_page.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -19,12 +23,15 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+    final database = FirebaseDatabase.instance.ref('memberData/');
+
 
     // final double buttonWidth = 200;
 
     final ButtonStyle buttonStyle = ElevatedButton.styleFrom(
         textStyle: const TextStyle(fontSize: 18), 
         fixedSize: const Size.fromWidth(200),
+        elevation: 2.0,
     );
 
   @override
@@ -77,7 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     ElevatedButton(
                         style: buttonStyle,
-                        onPressed: null, 
+                        onPressed: () { newMember(context); }, 
                         child: const Text('New Member'),
                     ),
                     const SizedBox(
@@ -85,10 +92,26 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     ElevatedButton(
                         style: buttonStyle,
-                        onPressed: null,
+                        onPressed: () { returningMember(context); },
                         child: const Text('Returning Member'),
                     ),
                 ],
+            ),
+        );
+    }
+    
+    Future<dynamic> newMember(BuildContext context) {
+        return Navigator.of(context).push(
+            MaterialPageRoute(
+                builder: (context) => QRScanner(database: database, version: 0),
+            ),
+        );
+    }
+
+    Future<dynamic> returningMember(BuildContext context) {
+        return Navigator.of(context).push(
+            MaterialPageRoute(
+                builder: (context) => QRScanner(database: database, version: 1),
             ),
         );
     }
