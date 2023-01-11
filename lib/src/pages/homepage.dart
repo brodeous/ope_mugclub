@@ -3,6 +3,8 @@ import 'package:ope_mugclub/src/components/qr_scanner.dart';
 import 'package:firebase_database/firebase_database.dart';
 import './new_member_page.dart';
 import './return_member_page.dart';
+import '../components/navigator.dart';
+import '../backend/server.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -23,16 +25,13 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-    final database = FirebaseDatabase.instance.ref('memberData/');
+  // final double buttonWidth = 200;
 
-
-    // final double buttonWidth = 200;
-
-    final ButtonStyle buttonStyle = ElevatedButton.styleFrom(
-        textStyle: const TextStyle(fontSize: 18), 
-        fixedSize: const Size.fromWidth(200),
-        elevation: 2.0,
-    );
+  final ButtonStyle buttonStyle = ElevatedButton.styleFrom(
+    textStyle: const TextStyle(fontSize: 18),
+    fixedSize: const Size.fromWidth(200),
+    elevation: 2.0,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -43,76 +42,74 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
 
-
     return Scaffold(
-        appBar: AppBar(
-            // Here we take the value from the MyHomePage object that was created by
-            // the App.build method, and use it to set our appbar title.
-            title: Text(widget.title),
-            actions: const [
-                IconButton(
-                    onPressed: null,
-                    icon: Icon(Icons.list, color: Colors.white,),
-                    tooltip: 'navigation',
-                ),
-            ],
-        ),
-        body: buildButtons(),
+      drawer: const NavBar(),
+      appBar: AppBar(
+        // Here we take the value from the MyHomePage object that was created by
+        // the App.build method, and use it to set our appbar title.
+        title: Text(widget.title),
+      ),
+      body: buildButtons(),
     );
   }
 
-    Widget buildButtons() {
-        return Center(
-            child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget> [
-                    Container(
-                        margin: const EdgeInsets.only(bottom: 100),
-                        width: 100,
-                        height: 100,
-                        decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.teal,
-                            ),
-                        alignment: Alignment.center,
-                        child: const Text('OPE',
-                            style: TextStyle(
-                                fontSize: 30,
-                                color: Colors.white,
-                                ),
-                            ),
-                    ),
-                    ElevatedButton(
-                        style: buttonStyle,
-                        onPressed: () { newMember(context); }, 
-                        child: const Text('New Member'),
-                    ),
-                    const SizedBox(
-                        height: 20,
-                    ),
-                    ElevatedButton(
-                        style: buttonStyle,
-                        onPressed: () { returningMember(context); },
-                        child: const Text('Returning Member'),
-                    ),
-                ],
+  Widget buildButtons() {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Container(
+            margin: const EdgeInsets.only(bottom: 100),
+            width: 100,
+            height: 100,
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.teal,
             ),
-        );
-    }
-    
-    Future<dynamic> newMember(BuildContext context) {
-        return Navigator.of(context).push(
-            MaterialPageRoute(
-                builder: (context) => QRScanner(database: database, version: 0),
+            alignment: Alignment.center,
+            child: const Text(
+              'OPE',
+              style: TextStyle(
+                fontSize: 30,
+                color: Colors.white,
+              ),
             ),
-        );
-    }
+          ),
+          ElevatedButton(
+            style: buttonStyle,
+            onPressed: () {
+              newMember(context);
+            },
+            child: const Text('New Member'),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          ElevatedButton(
+            style: buttonStyle,
+            onPressed: () {
+              returningMember(context);
+            },
+            child: const Text('Returning Member'),
+          ),
+        ],
+      ),
+    );
+  }
 
-    Future<dynamic> returningMember(BuildContext context) {
-        return Navigator.of(context).push(
-            MaterialPageRoute(
-                builder: (context) => QRScanner(database: database, version: 1),
-            ),
-        );
-    }
+  Future<dynamic> newMember(BuildContext context) {
+    return Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => QRScanner(database: Server.database, version: 0),
+      ),
+    );
+  }
+
+  Future<dynamic> returningMember(BuildContext context) {
+    return Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => QRScanner(database: Server.database, version: 1),
+      ),
+    );
+  }
 }
