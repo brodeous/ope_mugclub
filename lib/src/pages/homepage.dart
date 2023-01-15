@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:ope_mugclub/src/components/qr_scanner.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:ope_mugclub/src/components/styles/global_styles.dart';
 import './new_member_page.dart';
 import './return_member_page.dart';
 import '../components/navigator.dart';
 import '../backend/server.dart';
+import '../components/styles/global_styles.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -56,23 +58,31 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget buildButtons() {
     return Center(
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Container(
-            margin: const EdgeInsets.only(bottom: 100),
-            width: 100,
-            height: 100,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.teal,
+            margin: const EdgeInsets.only(
+              top: 100,
+              bottom: 50,
             ),
             alignment: Alignment.center,
-            child: const Text(
-              'OPE',
-              style: TextStyle(
-                fontSize: 30,
-                color: Colors.white,
-              ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  margin: const EdgeInsets.symmetric(
+                    vertical: 10,
+                  ),
+                  child: const Image(
+                    image: AssetImage('assets/beer_mugs.png'),
+                    width: 100,
+                    height: 100,
+                  ),
+                ),
+                Text(
+                  'Mug Club',
+                  style: Styles.homepageHeader,
+                ),
+              ],
             ),
           ),
           ElevatedButton(
@@ -80,17 +90,7 @@ class _MyHomePageState extends State<MyHomePage> {
             onPressed: () {
               newMember(context);
             },
-            child: const Text('New Member'),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          ElevatedButton(
-            style: buttonStyle,
-            onPressed: () {
-              returningMember(context);
-            },
-            child: const Text('Returning Member'),
+            child: const Text('Scan Qrcode'),
           ),
         ],
       ),
