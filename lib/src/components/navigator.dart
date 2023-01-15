@@ -11,7 +11,7 @@ class NavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      backgroundColor: Colors.teal.shade50,
+      backgroundColor: Colors.white,
       child: ListView(
         children: [
           Card(
