@@ -9,12 +9,12 @@ import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 class QRScanner extends StatefulWidget {
-    final DatabaseReference database;
-    final int version;
-    const QRScanner({super.key, required this.database, required this.version});
+  final DatabaseReference database;
+  final int version;
+  const QRScanner({super.key, required this.database, required this.version});
 
-    @override
-    State<QRScanner> createState() => _QRScannerState();
+  @override
+  State<QRScanner> createState() => _QRScannerState();
 }
 
 class _QRScannerState extends State<QRScanner> {
@@ -37,11 +37,11 @@ class _QRScannerState extends State<QRScanner> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
-          title: const Text('Scan QRCode',
-              ),
+        title: const Text(
+          'Scan QRCode',
+        ),
       ),
       body: Column(
         children: <Widget>[
@@ -53,57 +53,68 @@ class _QRScannerState extends State<QRScanner> {
             ),
           ),
           Expanded(
-            flex: 1,
-            child: Center(
-              child: _displayResult(widget.version),
-                )
-              ),
+              flex: 1,
+              child: Center(
+                child: _displayResult(widget.version),
+              )),
         ],
       ),
     );
   }
 
   Widget _displayResult(int version) {
-      if (version == 0) { // New Member
-        if (result != null) {
-                if (newMember) {
-                    return ElevatedButton(
-                        onPressed: () {Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (context) => NewMemberPage(qrCode: result!.code),
-                            ),
-                          );
-                        },
-                        child: const Text('Continue'),
-                    );
-                } else {
-                    return const Text('Already Exists');
-                }
+    if (version == 0) {
+      // New Member
+      if (result != null) {
+        if (newMember) {
+          return ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => NewMemberPage(qrCode: result!.code),
+                ),
+              );
+            },
+            child: const Text('Add Member'),
+          );
         } else {
-                   return const Text('Scan QR Code');
+          return ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => ReturnMemberPage(
+                      qrCode: result!.code, database: widget.database),
+                ),
+              );
+            },
+            child: const Text('Check In Member'),
+          );
         }
       } else {
-        if (result != null) {
-                if (!newMember) {
-                    return ElevatedButton(
-                        onPressed: () {Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (context) => ReturnMemberPage(qrCode: result!.code, database: widget.database),
-                            ),
-                          );
-                        },
-                        child: const Text('Continue'),
-                    );
-                } else {
-                    return const Text('Doesn\'t Exists');
-                }
-        } else {
-                   return const Text('Scan QR Code');
-        }
+        return const Text('Scan QR Code');
       }
-
+    } else {
+      if (result != null) {
+        if (!newMember) {
+          return ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => ReturnMemberPage(
+                      qrCode: result!.code, database: widget.database),
+                ),
+              );
+            },
+            child: const Text('Check In: '),
+          );
+        } else {
+          return const Text('Doesn\'t Exists');
+        }
+      } else {
+        return const Text('Scan QR Code');
+      }
+    }
   }
-
 
   void _onQRViewCreated(QRViewController controller) {
     this.controller = controller;
@@ -111,18 +122,19 @@ class _QRScannerState extends State<QRScanner> {
       setState(() {
         result = scanData;
         _checkDuplicate();
-        });
+      });
     });
   }
 
   void _checkDuplicate() {
-      widget.database.get().then((snapshot) {
-          bool exists = FireMethods.checkMemberExists(qrCode: result!.code as String, data: snapshot);
-          setState(() {
-              newMember = !exists;
-          });
+    widget.database.get().then((snapshot) {
+      bool exists = FireMethods.checkMemberExists(
+          qrCode: result!.code as String, data: snapshot);
+      setState(() {
+        newMember = !exists;
       });
-    }
+    });
+  }
 
   @override
   void dispose() {
@@ -130,4 +142,3 @@ class _QRScannerState extends State<QRScanner> {
     super.dispose();
   }
 }
-
