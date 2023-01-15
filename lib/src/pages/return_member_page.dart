@@ -61,9 +61,17 @@ class _ReturnMemberPageState extends State<ReturnMemberPage> {
           Container(
             width: MediaQuery.of(context).size.width * 0.85,
             alignment: Alignment.center,
-            child: Text(
-              '$visits',
-              style: Styles.displayVisits,
+            child: Container(
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: Colors.green,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              width: 100,
+              child: Text(
+                '$visits',
+                style: Styles.displayVisits,
+              ),
             ),
           ),
           Container(
