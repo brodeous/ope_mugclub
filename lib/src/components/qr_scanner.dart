@@ -63,7 +63,6 @@ class _QRScannerState extends State<QRScanner> {
   }
 
   Widget _displayResult(int version) {
-    if (version == 0) {
       // New Member
       if (result != null) {
         if (newMember) {
@@ -83,7 +82,7 @@ class _QRScannerState extends State<QRScanner> {
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) => ReturnMemberPage(
-                      qrCode: result!.code, database: widget.database),
+                      qrCode: result!.code),
                 ),
               );
             },
@@ -93,27 +92,6 @@ class _QRScannerState extends State<QRScanner> {
       } else {
         return const Text('Scan QR Code');
       }
-    } else {
-      if (result != null) {
-        if (!newMember) {
-          return ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => ReturnMemberPage(
-                      qrCode: result!.code, database: widget.database),
-                ),
-              );
-            },
-            child: const Text('Check In: '),
-          );
-        } else {
-          return const Text('Doesn\'t Exists');
-        }
-      } else {
-        return const Text('Scan QR Code');
-      }
-    }
   }
 
   void _onQRViewCreated(QRViewController controller) {

@@ -1,132 +1,109 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:ope_mugclub/src/utils/firebase_methods.dart';
 import '../components/styles/global_styles.dart';
-// import './homepage.dart';
+import '../backend/server.dart';
 
-class ReturnMemberPage extends StatefulWidget {
+class ReturnMemberPage extends StatelessWidget {
   final String? qrCode;
-  final DatabaseReference database;
   const ReturnMemberPage(
-      {super.key, required this.qrCode, required this.database});
+      {super.key, required this.qrCode});
 
-  @override
-  State<ReturnMemberPage> createState() => _ReturnMemberPageState();
-}
-
-class _ReturnMemberPageState extends State<ReturnMemberPage> {
   final String pageTitle = 'Returning Member';
-  String name = 'First Last';
-  String email = 'me@website.com';
-  String phone = '555-555-5555';
-  int visits = 0;
-  bool hasGrabed = false;
+  
+   void initState() async{ 
+      final visits = await Server.database.child('$qrCode').get();
+      if (visits.exists) {
+          final map = visits.value as Map<String, String>;
+          Server.database.child('$qrCode').update({'visits' : '${int.parse('${map['visits']}') + 1}'});
+      }
+   }
 
   @override
   Widget build(BuildContext context) {
+      
     return Scaffold(
       appBar: AppBar(
         title: Text(pageTitle),
         actions: const [
-          IconButton(
-            onPressed: null,
-            icon: Icon(
-              Icons.list,
-              color: Colors.white,
-            ),
-            tooltip: 'navigation',
-          ),
         ],
       ),
-      body: _buldPage(),
-    );
-  }
-
-  Widget _buldPage() {
-    if (!hasGrabed) {
-      _grabInformation();
-    }
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: MediaQuery.of(context).size.width * 0.85,
-            alignment: Alignment.center,
-            child: Text(
-              'Visits',
-              style: Styles.primaryHeader,
-            ),
-          ),
-          Container(
-            width: MediaQuery.of(context).size.width * 0.85,
-            alignment: Alignment.center,
-            child: Container(
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: Colors.green,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              width: 100,
-              child: Text(
-                '$visits',
-                style: Styles.displayVisits,
-              ),
-            ),
-          ),
-          Container(
-            width: MediaQuery.of(context).size.width * 0.85,
-            padding: const EdgeInsets.symmetric(
-              vertical: 25,
-            ),
-            alignment: Alignment.centerLeft,
-            child: Text(
-              name,
-              style: Styles.primaryHeader,
-            ),
-          ),
-          Container(
-            width: MediaQuery.of(context).size.width * 0.85,
-            alignment: Alignment.centerRight,
-            child: Text(
-              email,
-              style: Styles.secondaryHeader,
-            ),
-          ),
-          Container(
-            width: MediaQuery.of(context).size.width * 0.85,
-            alignment: Alignment.centerRight,
-            child: Text(
-              phone,
-              style: Styles.secondaryHeader,
-            ),
-          ),
-        ],
+      body: Center(
+      child: StreamBuilder(
+          stream: Server.database.child('$qrCode').onValue,
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+                return Text('Something went wrong! ${snapshot.error.toString()}');
+            } else if (snapshot.hasData) {
+                  final info =
+                  snapshot.data!.snapshot.value as Map<Object?, dynamic>;
+                return _children(info, context);
+            } else {
+                return const Center(
+                    child: CircularProgressIndicator(),
+                );
+            }
+        },
+      )
       ),
     );
   }
 
-  void _grabInformation() {
-    widget.database.child('${widget.qrCode}').get().then((snapshot) {
-      final userData =
-          Map<String, dynamic>.from(snapshot.value! as Map<Object?, Object?>);
-      final String name = '${userData['first']} ${userData['last']}';
-      final String email = '${userData['email']}';
-      final String phone = '${userData['phone']}';
-      final int visits = int.parse('${userData['visits']}') + 1;
+  Widget _children(snapshot, BuildContext context) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+              children: <Widget> [
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.85,
+                    alignment: Alignment.center,
+                    child: Text(
+                      'Visits',
+                      style: Styles.primaryHeader,
+                    ),
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.85,
+                    alignment: Alignment.center,
+                    child: Container(
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: Colors.green,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      width: 100,
+                      child: Text(
+                        snapshot['visits'],
+                        style: Styles.displayVisits,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.85,
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 25,
+                    ),
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      '${snapshot['first']} ${snapshot['last']}',
+                      style: Styles.primaryHeader,
+                    ),
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.85,
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      snapshot['email'],
+                      style: Styles.secondaryHeader,
+                    ),
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.85,
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      snapshot['phone'],
+                      style: Styles.secondaryHeader,
+                    ),
+                  ),
+                ]
+            );
 
-      FireMethods.updateVisits(
-          qrCode: '${widget.qrCode}',
-          visits: visits,
-          database: widget.database);
-
-      setState(() {
-        this.name = name;
-        this.email = email;
-        this.phone = phone;
-        this.visits = visits;
-        hasGrabed = true;
-      });
-    });
   }
 }

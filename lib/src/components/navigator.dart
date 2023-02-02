@@ -14,28 +14,28 @@ class NavBar extends StatelessWidget {
       backgroundColor: Colors.white,
       child: ListView(
         children: [
-          Card(
-            clipBehavior: Clip.hardEdge,
-            child: InkWell(
-              splashColor: Colors.teal.withAlpha(100),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        QRScanner(database: Server.database, version: 0),
-                  ),
-                );
-              },
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-                child: Text(
-                  'Add Member',
-                  style: Styles.secondaryHeader,
-                ),
-              ),
-            ),
-          ),
+          // Card(
+          //   clipBehavior: Clip.hardEdge,
+          //   child: InkWell(
+          //     splashColor: Colors.teal.withAlpha(100),
+          //     onTap: () {
+          //       Navigator.of(context).push(
+          //         MaterialPageRoute(
+          //           builder: (context) =>
+          //               QRScanner(database: Server.database, version: 0),
+          //         ),
+          //       );
+          //     },
+          //     child: Container(
+          //       padding:
+          //           const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+          //       child: Text(
+          //         'Add Member',
+          //         style: Styles.secondaryHeader,
+          //       ),
+          //     ),
+          //   ),
+          // ),
           Card(
             clipBehavior: Clip.hardEdge,
             child: InkWell(
@@ -52,7 +52,7 @@ class NavBar extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
                 child: Text(
-                  'Returning Member',
+                  'Scan Qrcode',
                   style: Styles.secondaryHeader,
                 ),
               ),

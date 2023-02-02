@@ -15,6 +15,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'OPE Mug Club',
       theme: ThemeData(
         // This is the theme of your application.
@@ -34,7 +35,7 @@ class MyApp extends StatelessWidget {
             if (snapshot.hasError) {
                 return Text('Something went wrong! ${snapshot.error.toString()}');
             } else if (snapshot.hasData) {
-                return const MyHomePage();
+                return MyHomePage();
             } else {
                 return const Center(
                     child: CircularProgressIndicator(),

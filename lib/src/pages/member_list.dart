@@ -1,4 +1,3 @@
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:ope_mugclub/src/components/styles/global_styles.dart';
 import '../backend/server.dart';
@@ -47,6 +46,14 @@ class _MemberListState extends State<MemberList> {
             );
             tilesList.add(memberTile);
           });
+        } else if (snapshot.hasError) {
+            return const Center (
+                child: Text('Database Error'),
+            );
+        } else {
+            return const Center(
+                child:CircularProgressIndicator(),
+            );
         }
         return ListView(
           children: tilesList,

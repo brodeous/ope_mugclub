@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:ope_mugclub/src/components/qr_scanner.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:ope_mugclub/src/components/styles/global_styles.dart';
 import './new_member_page.dart';
 import './return_member_page.dart';
 import '../components/navigator.dart';
 import '../backend/server.dart';
-import '../components/styles/global_styles.dart';
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+class MyHomePage extends StatelessWidget {
+    MyHomePage({super.key});
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -22,11 +20,6 @@ class MyHomePage extends StatefulWidget {
 
   final String title = 'OPE Mug Club';
 
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
   // final double buttonWidth = 200;
 
   final ButtonStyle buttonStyle = ElevatedButton.styleFrom(
@@ -49,55 +42,51 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: Text(title),
       ),
-      body: buildButtons(),
-    );
+      body:  Center(
+          child: Column(
+            children: <Widget>[
+              Container(
+                margin: const EdgeInsets.only(
+                  top: 100,
+                  bottom: 50,
+                ),
+                alignment: Alignment.center,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Container(
+                      margin: const EdgeInsets.symmetric(
+                        vertical: 10,
+                      ),
+                      child: const Image(
+                        image: AssetImage('assets/beer_mugs.png'),
+                        width: 100,
+                        height: 100,
+                      ),
+                    ),
+                    Text(
+                      'Mug Club',
+                      style: Styles.homepageHeader,
+                    ),
+                  ],
+                ),
+              ),
+              ElevatedButton(
+                style: buttonStyle,
+                onPressed: () {
+                  _onPressed(context);
+                },
+                child: const Text('Scan Qrcode'),
+              ),
+            ],
+          ),
+        )
+      );
   }
 
-  Widget buildButtons() {
-    return Center(
-      child: Column(
-        children: <Widget>[
-          Container(
-            margin: const EdgeInsets.only(
-              top: 100,
-              bottom: 50,
-            ),
-            alignment: Alignment.center,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Container(
-                  margin: const EdgeInsets.symmetric(
-                    vertical: 10,
-                  ),
-                  child: const Image(
-                    image: AssetImage('assets/beer_mugs.png'),
-                    width: 100,
-                    height: 100,
-                  ),
-                ),
-                Text(
-                  'Mug Club',
-                  style: Styles.homepageHeader,
-                ),
-              ],
-            ),
-          ),
-          ElevatedButton(
-            style: buttonStyle,
-            onPressed: () {
-              newMember(context);
-            },
-            child: const Text('Scan Qrcode'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<dynamic> newMember(BuildContext context) {
+  Future<dynamic> _onPressed(BuildContext context) {
     return Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => QRScanner(database: Server.database, version: 0),
@@ -105,11 +94,4 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Future<dynamic> returningMember(BuildContext context) {
-    return Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => QRScanner(database: Server.database, version: 1),
-      ),
-    );
-  }
 }
