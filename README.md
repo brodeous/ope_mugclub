@@ -6,7 +6,7 @@ A Flutter application designed to track and maintain the visits and milestones f
 
 The application is currently only tracking guests visits and incrementation. Below is a list of features to be implemented in the future.
 
-##Features
+## Features
 - [x] Read and link qrCode to guest information
 - [x] Increment guest's visit via scanning qrCode
 - [x] Save guests information and visit count to a database
