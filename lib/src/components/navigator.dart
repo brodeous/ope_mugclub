@@ -22,7 +22,7 @@ class NavBar extends StatelessWidget {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) =>
-                        QRScanner(database: Server.database, version: 0),
+                        const QRScanner(),
                   ),
                 );
               },
@@ -44,7 +44,7 @@ class NavBar extends StatelessWidget {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) =>
-                        QRScanner(database: Server.database, version: 1),
+                        const QRScanner(),
                   ),
                 );
               },

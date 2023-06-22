@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:ope_mugclub/src/utils/firebase_methods.dart';
+import 'package:ope_mugclub/src/backend/server.dart';
 import '../components/styles/global_styles.dart';
 // import './homepage.dart';
 
 class ReturnMemberPage extends StatefulWidget {
   final String? qrCode;
-  final DatabaseReference database;
   const ReturnMemberPage(
-      {super.key, required this.qrCode, required this.database});
+      {super.key, required this.qrCode});
 
   @override
   State<ReturnMemberPage> createState() => _ReturnMemberPageState();
@@ -17,8 +17,6 @@ class ReturnMemberPage extends StatefulWidget {
 class _ReturnMemberPageState extends State<ReturnMemberPage> {
   final String pageTitle = 'Returning Member';
   String name = 'First Last';
-  String email = 'me@website.com';
-  String phone = '555-555-5555';
   int visits = 0;
   bool hasGrabed = false;
 
@@ -43,6 +41,7 @@ class _ReturnMemberPageState extends State<ReturnMemberPage> {
   }
 
   Widget _buldPage() {
+      double container_width = MediaQuery.of(context).size.width * 0.85;
     if (!hasGrabed) {
       _grabInformation();
     }
@@ -51,7 +50,7 @@ class _ReturnMemberPageState extends State<ReturnMemberPage> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: MediaQuery.of(context).size.width * 0.85,
+            width: container_width,
             alignment: Alignment.center,
             child: Text(
               'Visits',
@@ -59,7 +58,7 @@ class _ReturnMemberPageState extends State<ReturnMemberPage> {
             ),
           ),
           Container(
-            width: MediaQuery.of(context).size.width * 0.85,
+            width: container_width,
             alignment: Alignment.center,
             child: Container(
               alignment: Alignment.center,
@@ -75,55 +74,52 @@ class _ReturnMemberPageState extends State<ReturnMemberPage> {
             ),
           ),
           Container(
-            width: MediaQuery.of(context).size.width * 0.85,
+            width: container_width,
             padding: const EdgeInsets.symmetric(
               vertical: 25,
             ),
-            alignment: Alignment.centerLeft,
+            alignment: Alignment.center,
             child: Text(
               name,
               style: Styles.primaryHeader,
             ),
           ),
           Container(
-            width: MediaQuery.of(context).size.width * 0.85,
-            alignment: Alignment.centerRight,
-            child: Text(
-              email,
-              style: Styles.secondaryHeader,
+            width: container_width,
+            alignment: Alignment.center,
+            child: Center(
+                child: Card(
+                    child:InkWell(
+                        splashColor: Colors.amber.withAlpha(30),
+                        onTap: () {
+                            debugPrint('Milestone tapped');},
+                        child: Text(
+                            'Milestones',
+                            style: Styles.secondaryHeader,
+                        ),
+                    ),
+                ),
             ),
-          ),
-          Container(
-            width: MediaQuery.of(context).size.width * 0.85,
-            alignment: Alignment.centerRight,
-            child: Text(
-              phone,
-              style: Styles.secondaryHeader,
-            ),
-          ),
+        ),
         ],
       ),
     );
   }
 
   void _grabInformation() {
-    widget.database.child('${widget.qrCode}').get().then((snapshot) {
+    Server.database.child('${widget.qrCode}').get().then((snapshot) {
       final userData =
           Map<String, dynamic>.from(snapshot.value! as Map<Object?, Object?>);
       final String name = '${userData['first']} ${userData['last']}';
-      final String email = '${userData['email']}';
-      final String phone = '${userData['phone']}';
       final int visits = int.parse('${userData['visits']}') + 1;
 
       FireMethods.updateVisits(
           qrCode: '${widget.qrCode}',
           visits: visits,
-          database: widget.database);
+          database: Server.database);
 
       setState(() {
         this.name = name;
-        this.email = email;
-        this.phone = phone;
         this.visits = visits;
         hasGrabed = true;
       });

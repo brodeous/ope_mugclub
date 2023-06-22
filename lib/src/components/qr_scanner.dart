@@ -5,13 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:ope_mugclub/src/pages/new_member_page.dart';
 import 'package:ope_mugclub/src/pages/return_member_page.dart';
 import 'package:ope_mugclub/src/utils/firebase_methods.dart';
+import 'package:ope_mugclub/src/backend/server.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 class QRScanner extends StatefulWidget {
-  final DatabaseReference database;
-  final int version;
-  const QRScanner({super.key, required this.database, required this.version});
+  const QRScanner({super.key});
 
   @override
   State<QRScanner> createState() => _QRScannerState();
@@ -55,65 +54,25 @@ class _QRScannerState extends State<QRScanner> {
           Expanded(
               flex: 1,
               child: Center(
-                child: _displayResult(widget.version),
+                child: _displayResult(),
               )),
         ],
       ),
     );
   }
 
-  Widget _displayResult(int version) {
-    if (version == 0) {
+  Widget _displayResult() {
       // New Member
       if (result != null) {
-        if (newMember) {
           return ElevatedButton(
             onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => NewMemberPage(qrCode: result!.code),
-                ),
-              );
+                Navigator.of(context).pop(result);
             },
-            child: const Text('Add Member'),
-          );
-        } else {
-          return ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => ReturnMemberPage(
-                      qrCode: result!.code, database: widget.database),
-                ),
-              );
-            },
-            child: const Text('Check In Member'),
-          );
-        }
+            child: const Text('Submit'),
+            );
       } else {
         return const Text('Scan QR Code');
       }
-    } else {
-      if (result != null) {
-        if (!newMember) {
-          return ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => ReturnMemberPage(
-                      qrCode: result!.code, database: widget.database),
-                ),
-              );
-            },
-            child: const Text('Check In: '),
-          );
-        } else {
-          return const Text('Doesn\'t Exists');
-        }
-      } else {
-        return const Text('Scan QR Code');
-      }
-    }
   }
 
   void _onQRViewCreated(QRViewController controller) {
@@ -121,20 +80,10 @@ class _QRScannerState extends State<QRScanner> {
     controller.scannedDataStream.listen((scanData) {
       setState(() {
         result = scanData;
-        _checkDuplicate();
       });
     });
   }
 
-  void _checkDuplicate() {
-    widget.database.get().then((snapshot) {
-      bool exists = FireMethods.checkMemberExists(
-          qrCode: result!.code as String, data: snapshot);
-      setState(() {
-        newMember = !exists;
-      });
-    });
-  }
 
   @override
   void dispose() {
