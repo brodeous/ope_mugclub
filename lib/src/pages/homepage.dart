@@ -31,7 +31,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   // final double buttonWidth = 200;
     Future? _data;
-    Barcode? qrCode;
+    String? qrCode;
     bool scanned = false;
     bool returnMember = false;
 
@@ -105,17 +105,25 @@ class _MyHomePageState extends State<MyHomePage> {
                             future: _data,
                             builder: (context, snapshot) {
                                 if (snapshot.hasData) {
-                                  if (snapshot.data.containsKey(qrCode)) {
-                                      String? name;
-                                      snapshot.data.child(qrCode).forEach((child) {
-                                          Map<dynamic, dynamic> data = child.value! as Map<dynamic, dynamic>;
-                                          name = data["first"] as String?;
-                                      });
+                                    Map<dynamic, dynamic> map = snapshot.data.value as Map<dynamic, dynamic>;
+                                  if (map.containsKey('$qrCode')) {
+
+                                      // Set button for returning member
+                                      Map<dynamic, dynamic> data = map[qrCode];
+                                      String name = data['first'];
                                       return ElevatedButton(
                                           style: buttonStyle,
                                           onPressed:() {},
-                                          child: Text('Check In $name.'),);
-                                  } else
+                                          child: Text('Check In $name'),
+                                          );
+                                  } else {
+
+                                      // Set button for new member
+                                      return ElevatedButton(
+                                          onPressed: () {}, 
+                                          child: Text('$qrCode'),
+                                      );
+                                  }
                                 } else {
                                     return const CircularProgressIndicator();
                                 }
@@ -131,11 +139,13 @@ class _MyHomePageState extends State<MyHomePage> {
                     style: buttonStyle,
                     onPressed: () async {
                       qrCode = await Navigator.of(context).push(
-                        MaterialPageRoute<Barcode>(
+                        MaterialPageRoute<String>(
                             builder: (context) => const QRScanner(),
                         ),
                     );
-                      _updateHome();
+
+                      // Update page state
+                      _updateHome(qrCode);
                     },
                     child: const Text('Scan QrCode'),
                   );
@@ -147,13 +157,14 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void _updateHome(Barcode? bcode) {
+  void _updateHome(String? bcode) {
     setState(() {
         scanned = true;
+        qrCode = bcode;
     });
 }
 
-  bool _checkDuplicate(Barcode? bcode) {
-      return exists;
-  }
+  //bool _checkDuplicate(Barcode? bcode) {
+      //return exists;
+  //}
 }

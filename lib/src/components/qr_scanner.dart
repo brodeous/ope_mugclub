@@ -19,7 +19,6 @@ class QRScanner extends StatefulWidget {
 class _QRScannerState extends State<QRScanner> {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   Barcode? result;
-  bool newMember = false;
   QRViewController? controller;
 
   // In order to get hot reload to work we need to pause the camera if the platform
@@ -51,36 +50,21 @@ class _QRScannerState extends State<QRScanner> {
               onQRViewCreated: _onQRViewCreated,
             ),
           ),
-          Expanded(
+          const Expanded(
               flex: 1,
               child: Center(
-                child: _displayResult(),
+                child: Text('Scan QR Code'),
               )),
         ],
       ),
     );
   }
 
-  Widget _displayResult() {
-      // New Member
-      if (result != null) {
-          return ElevatedButton(
-            onPressed: () {
-                Navigator.of(context).pop(result);
-            },
-            child: const Text('Submit'),
-            );
-      } else {
-        return const Text('Scan QR Code');
-      }
-  }
 
   void _onQRViewCreated(QRViewController controller) {
     this.controller = controller;
     controller.scannedDataStream.listen((scanData) {
-      setState(() {
-        result = scanData;
-      });
+        Navigator.of(context).pop(scanData.code);
     });
   }
 
