@@ -53,7 +53,7 @@ class _NewMemberPageState extends State<NewMemberPage> {
         child: Form(
           key: _formKey,
           onChanged: () {
-            Form.of(primaryFocus!.context!)?.save();
+            Form.of(primaryFocus!.context!).save();
           },
           child: Column(
             mainAxisSize: MainAxisSize.min,

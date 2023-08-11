@@ -21,12 +21,22 @@ class MyHomePage extends StatelessWidget {
   final String title = 'OPE Mug Club';
 
   // final double buttonWidth = 200;
+    Future? _data;
+    String? qrCode;
+    bool scanned = false;
+    bool returnMember = false;
 
   final ButtonStyle buttonStyle = ElevatedButton.styleFrom(
     textStyle: const TextStyle(fontSize: 18),
     fixedSize: const Size.fromWidth(200),
     elevation: 2.0,
   );
+
+    @override
+    void initState() {
+        super.initState();
+        _data = Server.database.get();
+    }
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +46,7 @@ class MyHomePage extends StatelessWidget {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
+
 
     return Scaffold(
       drawer: const NavBar(),
@@ -72,26 +83,112 @@ class MyHomePage extends StatelessWidget {
                     ),
                   ],
                 ),
-              ),
-              ElevatedButton(
-                style: buttonStyle,
-                onPressed: () {
-                  _onPressed(context);
-                },
-                child: const Text('Scan Qrcode'),
-              ),
-            ],
+              ],
+            ),
           ),
-        )
-      );
-  }
+          Builder(
+              builder: (BuildContext context) {
+                  if (scanned) {
+                          return FutureBuilder(
+                            future: _data,
+                            builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                    Map<dynamic, dynamic> map = snapshot.data.value as Map<dynamic, dynamic>;
+                                  if (map.containsKey('$qrCode')) {
 
-  Future<dynamic> _onPressed(BuildContext context) {
-    return Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => QRScanner(database: Server.database, version: 0),
+                                      // Set button for returning member
+                                      Map<dynamic, dynamic> data = map[qrCode];
+                                      String name = data['first'];
+                                      return Column(
+                                          children: [
+                                              ElevatedButton(
+                                                  style: buttonStyle,
+                                                  onPressed:() {},
+                                                  child: Text('Check In $name'),
+                                              ),
+                                              ElevatedButton(
+                                                  style: buttonStyle,
+                                                  onPressed: () async {
+                                                      qrCode = await Navigator.of(context).push(
+                                                          MaterialPageRoute<String>(
+                                                              builder: (context) => const QRScanner(),
+                                                          ),
+                                                      );
+
+                                                      // Update page state
+                                                      _updateHome(qrCode);
+                                                  },
+                                                  child: const Text('Scan Again')
+                                              ),
+                                          ]);
+                                  } else {
+
+                                      // Set button for new member
+                                      return Column(
+                                          children: [
+                                              ElevatedButton(
+                                                  style: buttonStyle,
+                                                      onPressed: () {}, 
+                                                      child: Text('$qrCode'),
+                                                  ),
+                                              ElevatedButton(
+                                                  style: buttonStyle,
+                                                  onPressed: () async {
+                                                      qrCode = await Navigator.of(context).push(
+                                                          MaterialPageRoute<String>(
+                                                              builder: (context) => const QRScanner(),
+                                                          ),
+                                                      );
+
+                                                      // Update page state
+                                                      _updateHome(qrCode);
+                                                    },
+                                                    child: const Text('Scan Again')
+                                              ),
+                                          ]);
+                                  }
+                                } else {
+                                    return const CircularProgressIndicator();
+                                }
+                            }
+                            );
+                      } else if (returnMember) {
+                          return ElevatedButton(
+                            style: buttonStyle,
+                            onPressed:() {},
+                            child: const Text('Returning Member'),);
+                } else {
+                  return ElevatedButton(
+                    style: buttonStyle,
+                    onPressed: () async {
+                      qrCode = await Navigator.of(context).push(
+                        MaterialPageRoute<String>(
+                            builder: (context) => const QRScanner(),
+                        ),
+                    );
+
+                      // Update page state
+                      _updateHome(qrCode);
+                    },
+                    child: const Text('Scan QrCode'),
+                  );
+                  }
+              },
+              ),
+        ],
       ),
     );
   }
+
+  void _updateHome(String? bcode) {
+    setState(() {
+        scanned = true;
+        qrCode = bcode;
+    });
+}
+
+  //bool _checkDuplicate(Barcode? bcode) {
+      //return exists;
+  //}
 
 }

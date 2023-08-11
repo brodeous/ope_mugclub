@@ -14,28 +14,6 @@ class NavBar extends StatelessWidget {
       backgroundColor: Colors.white,
       child: ListView(
         children: [
-          // Card(
-          //   clipBehavior: Clip.hardEdge,
-          //   child: InkWell(
-          //     splashColor: Colors.teal.withAlpha(100),
-          //     onTap: () {
-          //       Navigator.of(context).push(
-          //         MaterialPageRoute(
-          //           builder: (context) =>
-          //               QRScanner(database: Server.database, version: 0),
-          //         ),
-          //       );
-          //     },
-          //     child: Container(
-          //       padding:
-          //           const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-          //       child: Text(
-          //         'Add Member',
-          //         style: Styles.secondaryHeader,
-          //       ),
-          //     ),
-          //   ),
-          // ),
           Card(
             clipBehavior: Clip.hardEdge,
             child: InkWell(
@@ -44,7 +22,29 @@ class NavBar extends StatelessWidget {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) =>
-                        QRScanner(database: Server.database, version: 1),
+                        const QRScanner(),
+                  ),
+                );
+              },
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                child: Text(
+                  'Add Member',
+                  style: Styles.secondaryHeader,
+                ),
+              ),
+            ),
+          ),
+          Card(
+            clipBehavior: Clip.hardEdge,
+            child: InkWell(
+              splashColor: Colors.teal.withAlpha(100),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        const QRScanner(),
                   ),
                 );
               },

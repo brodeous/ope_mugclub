@@ -1,16 +1,17 @@
 # ope_mugclub
 
-A new Flutter project.
+A Flutter application designed to track and maintain the visits and milestones for an establishment's guest list. Guests check in via qrCode they are given upon sign-up.
 
-## Getting Started
+## Current Implementation
 
-This project is a starting point for a Flutter application.
+The application is currently only tracking guests visits and incrementation. Below is a list of features to be implemented in the future.
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Features
+- [x] Read and link qrCode to guest information
+- [x] Increment guest's visit via scanning qrCode
+- [x] Save guests information and visit count to a database
+- [ ] Track guest's milestone and status of milestone
+- [ ] Admin webpage
+- [ ] Print guest data to a excel friendly file
+- [ ] Provide a list of guests who are at a certain milestone and their status of said milestone
+- [ ] Mailing service to notify guest of their status
