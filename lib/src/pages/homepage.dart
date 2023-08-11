@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:ope_mugclub/src/components/qr_scanner.dart';
-import 'package:ope_mugclub/src/utils/firebase_methods.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:ope_mugclub/src/components/styles/global_styles.dart';
 import './new_member_page.dart';
 import './return_member_page.dart';
 import '../components/navigator.dart';
 import '../backend/server.dart';
-import '../components/styles/global_styles.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -111,18 +107,53 @@ class _MyHomePageState extends State<MyHomePage> {
                                       // Set button for returning member
                                       Map<dynamic, dynamic> data = map[qrCode];
                                       String name = data['first'];
-                                      return ElevatedButton(
-                                          style: buttonStyle,
-                                          onPressed:() {},
-                                          child: Text('Check In $name'),
-                                          );
+                                      return Column(
+                                          children: [
+                                              ElevatedButton(
+                                                  style: buttonStyle,
+                                                  onPressed:() {},
+                                                  child: Text('Check In $name'),
+                                              ),
+                                              ElevatedButton(
+                                                  style: buttonStyle,
+                                                  onPressed: () async {
+                                                      qrCode = await Navigator.of(context).push(
+                                                          MaterialPageRoute<String>(
+                                                              builder: (context) => const QRScanner(),
+                                                          ),
+                                                      );
+
+                                                      // Update page state
+                                                      _updateHome(qrCode);
+                                                  },
+                                                  child: const Text('Scan Again')
+                                              ),
+                                          ]);
                                   } else {
 
                                       // Set button for new member
-                                      return ElevatedButton(
-                                          onPressed: () {}, 
-                                          child: Text('$qrCode'),
-                                      );
+                                      return Column(
+                                          children: [
+                                              ElevatedButton(
+                                                  style: buttonStyle,
+                                                      onPressed: () {}, 
+                                                      child: Text('$qrCode'),
+                                                  ),
+                                              ElevatedButton(
+                                                  style: buttonStyle,
+                                                  onPressed: () async {
+                                                      qrCode = await Navigator.of(context).push(
+                                                          MaterialPageRoute<String>(
+                                                              builder: (context) => const QRScanner(),
+                                                          ),
+                                                      );
+
+                                                      // Update page state
+                                                      _updateHome(qrCode);
+                                                    },
+                                                    child: const Text('Scan Again')
+                                              ),
+                                          ]);
                                   }
                                 } else {
                                     return const CircularProgressIndicator();
