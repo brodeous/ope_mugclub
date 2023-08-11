@@ -52,7 +52,7 @@ class NavBar extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
                 child: Text(
-                  'Returning Member',
+                  'Scan Qrcode',
                   style: Styles.secondaryHeader,
                 ),
               ),
