@@ -12,9 +12,9 @@ class ReturnMemberPage extends StatelessWidget {
 
   final String pageTitle = 'Returning Member';
 
-  String name = 'First Last';
-  int visits = 0;
-  bool hasGrabed = false;
+//  int visits = 0;
+//  String name = 'First Last';
+//  bool hasGrabed = false;
   
 //    void initState() async{ 
 //       final visits = await Server.database.child('$qrCode').get();
@@ -33,11 +33,11 @@ class ReturnMemberPage extends StatelessWidget {
         actions: const [
         ],
       ),
-      body: _buldPage(),
+      body: _buldPage(context),
     );
   }
 
-  Widget _buldPage() {
+  Widget _buldPage(BuildContext context) {
       double container_width = MediaQuery.of(context).size.width * 0.85;
     if (!hasGrabed) {
       _grabInformation();

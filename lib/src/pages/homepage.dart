@@ -6,8 +6,8 @@ import './return_member_page.dart';
 import '../components/navigator.dart';
 import '../backend/server.dart';
 
-class MyHomePage extends StatelessWidget {
-    MyHomePage({super.key});
+class MyHomePage extends StatefulWidget {
+    const MyHomePage({super.key});
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -19,6 +19,11 @@ class MyHomePage extends StatelessWidget {
   // always marked "final".
 
   final String title = 'OPE Mug Club';
+  @override
+    State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
 
   // final double buttonWidth = 200;
     Future? _data;
@@ -53,7 +58,7 @@ class MyHomePage extends StatelessWidget {
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text(title),
+        title: Text(widget.title),
       ),
       body:  Center(
           child: Column(
@@ -83,9 +88,7 @@ class MyHomePage extends StatelessWidget {
                     ),
                   ],
                 ),
-              ],
-            ),
-          ),
+              ),
           Builder(
               builder: (BuildContext context) {
                   if (scanned) {
@@ -177,6 +180,7 @@ class MyHomePage extends StatelessWidget {
               ),
         ],
       ),
+      ),
     );
   }
 
@@ -186,9 +190,5 @@ class MyHomePage extends StatelessWidget {
         qrCode = bcode;
     });
 }
-
-  //bool _checkDuplicate(Barcode? bcode) {
-      //return exists;
-  //}
-
 }
+
