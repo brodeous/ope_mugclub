@@ -29,7 +29,6 @@ class _MyHomePageState extends State<MyHomePage> {
     Future? _data;
     String? qrCode;
     bool scanned = false;
-    bool returnMember = false;
 
   final ButtonStyle buttonStyle = ElevatedButton.styleFrom(
     textStyle: const TextStyle(fontSize: 18),
@@ -96,11 +95,12 @@ class _MyHomePageState extends State<MyHomePage> {
                             future: _data,
                             builder: (context, snapshot) {
                                 if (snapshot.hasData) {
-                                    Map<dynamic, dynamic> map = snapshot.data.value as Map<dynamic, dynamic>;
-                                  if (map.containsKey('$qrCode')) {
+                                    QuerySnapshot<Object?>? snap = snapshot.data;
+                                    Map<dynamic, dynamic> map = snap.data();
+                                  if (map.containsValue('$qrCode')) {
 
                                       // Set button for returning member
-                                      Map<dynamic, dynamic> data = map[qrCode];
+                                      Map<dynamic, dynamic> data = map['$qrCode'];
                                       String name = data['first'];
                                       return Column(
                                           children: [
@@ -155,11 +155,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                 }
                             }
                             );
-                      } else if (returnMember) {
-                          return ElevatedButton(
-                            style: buttonStyle,
-                            onPressed:() {},
-                            child: const Text('Returning Member'),);
                 } else {
                   return ElevatedButton(
                     style: buttonStyle,
