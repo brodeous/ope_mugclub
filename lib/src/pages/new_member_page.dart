@@ -33,14 +33,15 @@ class _NewMemberPageState extends State<NewMemberPage> {
       appBar: AppBar(
         title: Text(pageTitle),
       ),
-      body: _buldPage(),
+      body: Center(
+          child: _buldPage(),
+      ),
     );
   }
 
   Widget _buldPage() {
       if (!confirm) {
-    return Center(
-      child: FocusTraversalGroup(
+      return FocusTraversalGroup(
         child: Form(
           key: _formKey,
           onChanged: () {
@@ -188,25 +189,13 @@ class _NewMemberPageState extends State<NewMemberPage> {
               ),
             ],
           ),
-        ),
-      ),
-    );
+          ),
+        );
       } else {
-          DateTime time = DateTime.now();
-          DateTime prev = time.subtract(const Duration(seconds: 2));
-          int tmp = time.compareTo(prev);
-          return Center(
-              child: Column (
-                  children: [
-                      const Icon(
-                  Icons.check_circle_outline,
-                  color: Colors.green,
-                  size: 250,
-              ),
-                      Text('$time'),
-                      Text('$tmp'),
-                  ],
-              ),
+          return const Icon(
+              Icons.check_circle_outline,
+              color: Colors.green,
+              size: 250,
           );
       }
   }
