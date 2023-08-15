@@ -17,15 +17,9 @@ class NewMemberPage extends StatefulWidget {
 class _NewMemberPageState extends State<NewMemberPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final String pageTitle = 'New Member';
-  Map<String, String> user = {'first' : '',
-                                'last' : '',
-                                'email' : '',
-                                'phone' : ''};
-  // String? first;
-  // String? last;
-  // String? email;
-  // String? phone;
+  Map<String, String> user = {'first' : '', 'last' : '', 'email' : '', 'phone' : ''};
   int state = 1;
+  bool confirm = false;
 
   final ButtonStyle buttonStyle = ElevatedButton.styleFrom(
     textStyle: const TextStyle(fontSize: 18),
@@ -44,6 +38,7 @@ class _NewMemberPageState extends State<NewMemberPage> {
   }
 
   Widget _buldPage() {
+      if (!confirm) {
     return Center(
       child: FocusTraversalGroup(
         child: Form(
@@ -139,7 +134,7 @@ class _NewMemberPageState extends State<NewMemberPage> {
                     ),
                   ),
                   validator: (String? val) {
-                    if (val == null || val.isEmpty || !val.contains('@')) {
+                    if (RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(val as String)) {
                       return 'Please Enter a Email Address';
                     } else {
                       user['email'] = val;
@@ -179,22 +174,14 @@ class _NewMemberPageState extends State<NewMemberPage> {
                 alignment: Alignment.centerRight,
                 child: ElevatedButton(
                   style: buttonStyle,
-                  onPressed: () {
+                  onPressed: () async {
+                      bool userConfirm = false;
+
                       if (_formKey.currentState!.validate()) {
-                      _buildPopupDialog(context);
+                      userConfirm = await _buildPopupDialog(context);
                       }
-                    // if (_formKey.currentState!.validate()) {
-                    //   Navigator.of(context).push(
-                    //     MaterialPageRoute(
-                    //       builder: (context) => MemberInfoConfirmPage(
-                    //           first: first,
-                    //           last: last,
-                    //           email: email,
-                    //           phone: phone,
-                    //           qrCode: widget.qrCode),
-                    //     ),
-                    //   );
-                    // }
+
+                          _update(userConfirm);
                   },
                   child: const Text('Continue'),
                 ),
@@ -204,12 +191,30 @@ class _NewMemberPageState extends State<NewMemberPage> {
         ),
       ),
     );
+      } else {
+          DateTime time = DateTime.now();
+          DateTime prev = time.subtract(const Duration(seconds: 2));
+          int tmp = time.compareTo(prev);
+          return Center(
+              child: Column (
+                  children: [
+                      const Icon(
+                  Icons.check_circle_outline,
+                  color: Colors.green,
+                  size: 250,
+              ),
+                      Text('$time'),
+                      Text('$tmp'),
+                  ],
+              ),
+          );
+      }
   }
 
-  Future _buildPopupDialog(BuildContext context) {
+  Future _buildPopupDialog (BuildContext context) {
       TextStyle infoStyle = const TextStyle(fontSize: 20.0);
       String phone = user['phone'] as String;
-      return showDialog<String> (
+      return showDialog<bool> (
           context: context,
           builder: (BuildContext context) => AlertDialog(
               title: const Text('Member Info'),
@@ -227,7 +232,7 @@ class _NewMemberPageState extends State<NewMemberPage> {
               actions: <Widget>[
                   OutlinedButton(
                       onPressed: () {
-                          Navigator.of(context).pop();
+                          Navigator.of(context).pop(true);
                       },
                       child: const Text('Close'),
                   ),
@@ -263,4 +268,13 @@ class _NewMemberPageState extends State<NewMemberPage> {
           ),
           );
   }
+
+  void _update(bool update) {
+    
+    setState(() {
+        confirm = update;
+    }
+    );
+  }
+
 }
