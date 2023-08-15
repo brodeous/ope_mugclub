@@ -95,9 +95,8 @@ class _MyHomePageState extends State<MyHomePage> {
                             future: _data,
                             builder: (context, snapshot) {
                                 if (snapshot.hasData) {
-                                    QuerySnapshot<Object?>? snap = snapshot.data;
-                                    Map<dynamic, dynamic> map = snap.data();
-                                  if (map.containsValue('$qrCode')) {
+                                    Map<dynamic, dynamic> map = snapshot.data.value as Map<dynamic, dynamic>;
+                                  if (map.containsKey('$qrCode')) {
 
                                       // Set button for returning member
                                       Map<dynamic, dynamic> data = map['$qrCode'];
@@ -158,16 +157,23 @@ class _MyHomePageState extends State<MyHomePage> {
                 } else {
                   return ElevatedButton(
                     style: buttonStyle,
-                    onPressed: () async {
-                      qrCode = await Navigator.of(context).push(
-                        MaterialPageRoute<String>(
-                            builder: (context) => const QRScanner(),
-                        ),
-                    );
-
-                      // Update page state
-                      _updateHome(qrCode);
+                    onPressed:() {
+                        Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder:(context) => const NewMemberPage(),
+                            ),
+                        );
                     },
+                    // onPressed: () async {
+                    //   qrCode = await Navigator.of(context).push(
+                    //     MaterialPageRoute<String>(
+                    //         builder: (context) => const QRScanner(),
+                    //     ),
+                    // );
+
+                    //   // Update page state
+                    //   _updateHome(qrCode);
+                    // },
                     child: const Text('Scan QrCode'),
                   );
                   }

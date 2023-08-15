@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 
+import '../legal/legal.dart';
 import './member_info_confirm_page.dart';
 // import './homepage.dart';
 
@@ -15,10 +17,14 @@ class NewMemberPage extends StatefulWidget {
 class _NewMemberPageState extends State<NewMemberPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final String pageTitle = 'New Member';
-  String? first;
-  String? last;
-  String? email;
-  String? phone;
+  Map<String, String> user = {'first' : '',
+                                'last' : '',
+                                'email' : '',
+                                'phone' : ''};
+  // String? first;
+  // String? last;
+  // String? email;
+  // String? phone;
   int state = 1;
 
   final ButtonStyle buttonStyle = ElevatedButton.styleFrom(
@@ -32,16 +38,6 @@ class _NewMemberPageState extends State<NewMemberPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(pageTitle),
-        actions: const [
-          IconButton(
-            onPressed: null,
-            icon: Icon(
-              Icons.list,
-              color: Colors.white,
-            ),
-            tooltip: 'navigation',
-          ),
-        ],
       ),
       body: _buldPage(),
     );
@@ -96,7 +92,7 @@ class _NewMemberPageState extends State<NewMemberPage> {
                           if (val == null || val.isEmpty) {
                             return 'Please Enter a Name';
                           } else {
-                            first = val;
+                            user['first'] = val;
                             return null;
                           }
                         },
@@ -121,7 +117,7 @@ class _NewMemberPageState extends State<NewMemberPage> {
                           if (val == null || val.isEmpty) {
                             return 'Please Enter a Name';
                           } else {
-                            last = val;
+                            user['last'] = val;
                             return null;
                           }
                         },
@@ -146,7 +142,7 @@ class _NewMemberPageState extends State<NewMemberPage> {
                     if (val == null || val.isEmpty || !val.contains('@')) {
                       return 'Please Enter a Email Address';
                     } else {
-                      email = val;
+                      user['email'] = val;
                       return null;
                     }
                   },
@@ -171,7 +167,7 @@ class _NewMemberPageState extends State<NewMemberPage> {
                     if (val == null || val.isEmpty || val.length != 10) {
                       return 'Please Enter a Phone Number';
                     } else {
-                      phone = val;
+                      user['phone'] = val;
                       return null;
                     }
                   },
@@ -184,18 +180,21 @@ class _NewMemberPageState extends State<NewMemberPage> {
                 child: ElevatedButton(
                   style: buttonStyle,
                   onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => MemberInfoConfirmPage(
-                              first: first,
-                              last: last,
-                              email: email,
-                              phone: phone,
-                              qrCode: widget.qrCode),
-                        ),
-                      );
-                    }
+                      if (_formKey.currentState!.validate()) {
+                      _buildPopupDialog(context);
+                      }
+                    // if (_formKey.currentState!.validate()) {
+                    //   Navigator.of(context).push(
+                    //     MaterialPageRoute(
+                    //       builder: (context) => MemberInfoConfirmPage(
+                    //           first: first,
+                    //           last: last,
+                    //           email: email,
+                    //           phone: phone,
+                    //           qrCode: widget.qrCode),
+                    //     ),
+                    //   );
+                    // }
                   },
                   child: const Text('Continue'),
                 ),
@@ -207,27 +206,61 @@ class _NewMemberPageState extends State<NewMemberPage> {
     );
   }
 
-  Widget _buildPopupDialog(BuildContext context) {
-    return AlertDialog(
-      title: const Text('Member Info'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text('First: $first'),
-          Text('Last: $last'),
-          Text('Email: $email'),
-          Text('Phone: $phone'),
-        ],
-      ),
-      actions: <Widget>[
-        OutlinedButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          child: const Text('Close'),
-        ),
-      ],
-    );
+  Future _buildPopupDialog(BuildContext context) {
+      TextStyle infoStyle = const TextStyle(fontSize: 20.0);
+      String phone = user['phone'] as String;
+      return showDialog<String> (
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+              title: const Text('Member Info'),
+              content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                      Text('First: ${user['first']}', style: infoStyle,),
+                      Text('Last: ${user['last']}', style: infoStyle,),
+                      Text('Email: ${user['email']}', style: infoStyle,),
+                      Text('Phone: ${phone.substring(0, 3)}-${phone.substring(3, 6)}-${phone.substring(6, 10)}', style: infoStyle,),
+                      _buildTerms(),
+                  ],
+              ),
+              actions: <Widget>[
+                  OutlinedButton(
+                      onPressed: () {
+                          Navigator.of(context).pop();
+                      },
+                      child: const Text('Close'),
+                  ),
+              ],
+              )
+        );
+  }
+
+  Widget _buildTerms() {
+      TextStyle defaultStyle = const TextStyle(color: Colors.grey, fontSize: 10.0);
+      TextStyle linkStyle = const TextStyle(color: Colors.blue, fontSize: 12.0);
+      return RichText(
+          text: TextSpan(
+              style: defaultStyle,
+              children: <TextSpan>[
+                  const TextSpan(text: 'By clicking Sign Up, you agree to our '),
+                  TextSpan(
+                      text: 'Terms of Service',
+                      style: linkStyle,
+                      recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                          Terms(context);
+                      }),
+                  const TextSpan(text: ' and that you have read our '),
+                  TextSpan(
+                      text: 'Privacy Policy',
+                      style: linkStyle,
+                      recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                          Privacy(context);
+                      }),
+              ],
+          ),
+          );
   }
 }
