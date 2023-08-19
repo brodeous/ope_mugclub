@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 
 import '../legal/legal.dart';
+import '../models/user.dart';
 import './member_info_confirm_page.dart';
 // import './homepage.dart';
 
 class NewMemberPage extends StatefulWidget {
-  final String? qrCode;
+  final String qrCode;
 
-  const NewMemberPage({super.key, this.qrCode});
+  const NewMemberPage({super.key, required this.qrCode});
 
   @override
   State<NewMemberPage> createState() => _NewMemberPageState();
@@ -17,7 +18,8 @@ class NewMemberPage extends StatefulWidget {
 class _NewMemberPageState extends State<NewMemberPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final String pageTitle = 'New Member';
-  Map<String, String> user = {'first' : '', 'last' : '', 'email' : '', 'phone' : ''};
+  User user = User(qrCode: widget.qrCode);
+  //Map<String, String> user = {'first' : '', 'last' : '', 'email' : '', 'phone' : ''};
   int state = 1;
   bool confirm = false;
 
@@ -88,7 +90,8 @@ class _NewMemberPageState extends State<NewMemberPage> {
                           if (val == null || val.isEmpty) {
                             return 'Please Enter a Name';
                           } else {
-                            user['first'] = val;
+                            user.setFirst(
+                                first: val);
                             return null;
                           }
                         },
@@ -113,7 +116,8 @@ class _NewMemberPageState extends State<NewMemberPage> {
                           if (val == null || val.isEmpty) {
                             return 'Please Enter a Name';
                           } else {
-                            user['last'] = val;
+                            user.setLast(
+                                last: val);
                             return null;
                           }
                         },
@@ -135,10 +139,11 @@ class _NewMemberPageState extends State<NewMemberPage> {
                     ),
                   ),
                   validator: (String? val) {
-                    if (RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(val as String)) {
-                      return 'Please Enter a Email Address';
+                    if (val == null || val.isEmpty || RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(val) == false) {
+                      return 'Please Enter an Email Address';
                     } else {
-                      user['email'] = val;
+                      user.setEmail(
+                          email: val);
                       return null;
                     }
                   },
@@ -163,7 +168,8 @@ class _NewMemberPageState extends State<NewMemberPage> {
                     if (val == null || val.isEmpty || val.length != 10) {
                       return 'Please Enter a Phone Number';
                     } else {
-                      user['phone'] = val;
+                      user.setPhone(
+                          phone: val.substring(0, 3) + '-' + val.substring(3, 6) + '-' + val.substring(6, 10));
                       return null;
                     }
                   },
@@ -182,6 +188,7 @@ class _NewMemberPageState extends State<NewMemberPage> {
                       userConfirm = await _buildPopupDialog(context);
                       }
 
+                      // TODO: update server upon user confirmation
                           _update(userConfirm);
                   },
                   child: const Text('Continue'),
@@ -202,7 +209,6 @@ class _NewMemberPageState extends State<NewMemberPage> {
 
   Future _buildPopupDialog (BuildContext context) {
       TextStyle infoStyle = const TextStyle(fontSize: 20.0);
-      String phone = user['phone'] as String;
       return showDialog<bool> (
           context: context,
           builder: (BuildContext context) => AlertDialog(
@@ -211,10 +217,10 @@ class _NewMemberPageState extends State<NewMemberPage> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                      Text('First: ${user['first']}', style: infoStyle,),
-                      Text('Last: ${user['last']}', style: infoStyle,),
-                      Text('Email: ${user['email']}', style: infoStyle,),
-                      Text('Phone: ${phone.substring(0, 3)}-${phone.substring(3, 6)}-${phone.substring(6, 10)}', style: infoStyle,),
+                      Text('First: ${user.getFirst()}', style: infoStyle,),
+                      Text('Last: ${user.getLast()}', style: infoStyle,),
+                      Text('Email: ${user.getEmail()}', style: infoStyle,),
+                      Text('Phone: ${user.getPhone()}', style: infoStyle,),
                       _buildTerms(),
                   ],
               ),
@@ -223,7 +229,7 @@ class _NewMemberPageState extends State<NewMemberPage> {
                       onPressed: () {
                           Navigator.of(context).pop(true);
                       },
-                      child: const Text('Close'),
+                      child: const Text('Confirm'),
                   ),
               ],
               )
