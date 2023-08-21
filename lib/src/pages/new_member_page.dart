@@ -3,8 +3,8 @@ import 'package:flutter/gestures.dart';
 
 import '../legal/legal.dart';
 import '../models/user.dart';
+import '../backend/server.dart';
 import './member_info_confirm_page.dart';
-// import './homepage.dart';
 
 class NewMemberPage extends StatefulWidget {
   final String qrCode;
@@ -18,16 +18,22 @@ class NewMemberPage extends StatefulWidget {
 class _NewMemberPageState extends State<NewMemberPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final String pageTitle = 'New Member';
-  User user = User(qrCode: widget.qrCode);
-  //Map<String, String> user = {'first' : '', 'last' : '', 'email' : '', 'phone' : ''};
+  User user = User();
   int state = 1;
   bool confirm = false;
+  bool loading = false;
 
   final ButtonStyle buttonStyle = ElevatedButton.styleFrom(
     textStyle: const TextStyle(fontSize: 18),
     fixedSize: const Size.fromWidth(200),
     elevation: 2.0,
   );
+
+  @override
+  void initState() {
+      super.initState();
+      user = User(qrCode: widget.qrCode);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -183,13 +189,24 @@ class _NewMemberPageState extends State<NewMemberPage> {
                   style: buttonStyle,
                   onPressed: () async {
                       bool userConfirm = false;
+                      bool isLoading = true;
 
                       if (_formKey.currentState!.validate()) {
                       userConfirm = await _buildPopupDialog(context);
                       }
 
                       // TODO: update server upon user confirmation
-                          _update(userConfirm);
+                      setState(() {
+                          confirm = userConfirm;
+                          loading = isLoading;
+                      });
+
+                      isLoading = await _addUser(user);
+
+                      setState(() {
+                          loading = isLoading;
+                      }
+                      );
                   },
                   child: const Text('Continue'),
                 ),
@@ -198,6 +215,8 @@ class _NewMemberPageState extends State<NewMemberPage> {
           ),
           ),
         );
+      } else if (loading) {
+            return const CircularProgressIndicator();
       } else {
           return const Icon(
               Icons.check_circle_outline,
@@ -234,6 +253,14 @@ class _NewMemberPageState extends State<NewMemberPage> {
               ],
               )
         );
+  }
+
+  Future _addUser(User user) {
+    Server.database.child(widget.qrCode).set(user.toDict())
+            .then((_) {
+                return false;
+            });
+    return Future.value(true);
   }
 
   Widget _buildTerms() {

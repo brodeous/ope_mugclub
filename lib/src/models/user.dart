@@ -8,7 +8,7 @@ class User {
     int visits = 1;
     DateTime time = DateTime.now();
 
-    User({this.first, this.last, this.email, this.phone, required this.qrCode});
+    User({this.first, this.last, this.email, this.phone, this.qrCode});
     
 
     String? getFirst() => first;

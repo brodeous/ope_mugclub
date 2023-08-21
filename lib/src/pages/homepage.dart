@@ -95,7 +95,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             future: _data,
                             builder: (context, snapshot) {
                                 if (snapshot.hasData) {
-                                    Map<dynamic, dynamic> map = snapshot.data.value as Map<dynamic, dynamic>;
+                                    Map<dynamic,dynamic> map = Map<dynamic,dynamic>.from(snapshot.data.value! as Map<dynamic,dynamic>);
                                   if (map.containsKey('$qrCode')) {
 
                                       // Set button for returning member
@@ -130,7 +130,13 @@ class _MyHomePageState extends State<MyHomePage> {
                                           children: [
                                               ElevatedButton(
                                                   style: buttonStyle,
-                                                      onPressed: () {}, 
+                                                      onPressed: () {
+                                                          Navigator.of(context).push(
+                                                              MaterialPageRoute(
+                                                                  builder:(context) => NewMemberPage(qrCode: '$qrCode'),
+                                                              ),
+                                                          );
+                                                      }, 
                                                       child: Text('$qrCode'),
                                                   ),
                                               ElevatedButton(
@@ -157,23 +163,16 @@ class _MyHomePageState extends State<MyHomePage> {
                 } else {
                   return ElevatedButton(
                     style: buttonStyle,
-                    onPressed:() {
-                        Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder:(context) => const NewMemberPage(),
-                            ),
-                        );
-                    },
-                    // onPressed: () async {
-                    //   qrCode = await Navigator.of(context).push(
-                    //     MaterialPageRoute<String>(
-                    //         builder: (context) => const QRScanner(),
-                    //     ),
-                    // );
+                    onPressed: () async {
+                       qrCode = await Navigator.of(context).push(
+                         MaterialPageRoute<String>(
+                            builder: (context) => const QRScanner(),
+                         ),
+                     );
 
-                    //   // Update page state
-                    //   _updateHome(qrCode);
-                    // },
+                       // Update page state
+                       _updateHome(qrCode);
+                     },
                     child: const Text('Scan QrCode'),
                   );
                   }
