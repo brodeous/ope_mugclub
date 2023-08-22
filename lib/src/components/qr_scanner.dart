@@ -2,12 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:ope_mugclub/src/pages/new_member_page.dart';
-import 'package:ope_mugclub/src/pages/return_member_page.dart';
-import 'package:ope_mugclub/src/utils/firebase_methods.dart';
-import 'package:ope_mugclub/src/backend/server.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
-import 'package:firebase_database/firebase_database.dart';
 
 class QRScanner extends StatefulWidget {
   const QRScanner({super.key});
@@ -63,7 +58,7 @@ class _QRScannerState extends State<QRScanner> {
   void _onQRViewCreated(QRViewController controller) {
     this.controller = controller;
     controller.scannedDataStream.listen((scanData) {
-        Navigator.of(context).pop<String>(scanData.code);
+        Navigator.of(context).pop<String>(scanData.code as String);
     });
   }
 
