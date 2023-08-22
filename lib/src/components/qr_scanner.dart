@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class QRScanner extends StatefulWidget {
-  const QRScanner({super.key});
+    final BuildContext context;
+  const QRScanner({super.key, required this.context});
 
   @override
   State<QRScanner> createState() => _QRScannerState();
@@ -58,7 +59,7 @@ class _QRScannerState extends State<QRScanner> {
   void _onQRViewCreated(QRViewController controller) {
     this.controller = controller;
     controller.scannedDataStream.listen((scanData) {
-        Navigator.of(context).pop<String>(scanData.code as String);
+        Navigator.of(widget.context).pop<String>(scanData.code);
     });
   }
 

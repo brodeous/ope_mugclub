@@ -96,10 +96,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       future: _data,
                       builder: (context, snapshot) {
                           if (scanned) {
-                              if (snapshot.hasData) {
-                                  Map<dynamic,dynamic> map = json.decode(snapshot.data);
-                                  if (map.containsKey('$qrCode')) {
-
+                              if (snapshot.data['$qrCode'] != null) {
+                                  Map<dynamic,dynamic> map = Map<dynamic,dynamic>.from(snapshot.data.value);
                                       // Set button for returning member
                                       Map<dynamic, dynamic> data = map['$qrCode'];
                                       String name = data['first'];
@@ -115,7 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                   onPressed: () async {
                                                       qrCode = await Navigator.of(context).push(
                                                           MaterialPageRoute<String>(
-                                                              builder: (context) => const QRScanner(),
+                                                              builder: (context) => QRScanner(context: context),
                                                           ),
                                                       );
 
@@ -146,7 +144,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                   onPressed: () async {
                                                       qrCode = await Navigator.of(context).push(
                                                           MaterialPageRoute<String>(
-                                                              builder: (context) => const QRScanner(),
+                                                              builder: (context) => QRScanner(context: context),
                                                           ),
                                                       );
 
@@ -157,16 +155,13 @@ class _MyHomePageState extends State<MyHomePage> {
                                               ),
                                               ]);
                                   }
-                              } else {
-                                  return const CircularProgressIndicator();
-                              }
                           } else {
                               return ElevatedButton(
                                   style: buttonStyle,
                                   onPressed: () async {
                                       qrCode = await Navigator.of(context).push(
                                           MaterialPageRoute<String>(
-                                              builder: (context) => const QRScanner(),
+                                              builder: (context) => QRScanner(context: context),
                                           ),
                                       );
 

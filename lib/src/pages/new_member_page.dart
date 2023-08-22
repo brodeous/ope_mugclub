@@ -256,11 +256,12 @@ class _NewMemberPageState extends State<NewMemberPage> {
   }
 
   Future _addUser(User user) {
+      bool added = false;
     Server.database.child(widget.qrCode).set(user.toDict())
             .then((_) {
-                return false;
+                added = true;
             });
-    return Future.value(true);
+    return Future.value(!added);
   }
 
   Widget _buildTerms() {
