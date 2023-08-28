@@ -17,6 +17,12 @@ class _QRScannerState extends State<QRScanner> {
   Barcode? result;
   QRViewController? controller;
 
+  final ButtonStyle buttonStyle = ElevatedButton.styleFrom(
+    textStyle: const TextStyle(fontSize: 18),
+    fixedSize: const Size.fromWidth(100),
+    elevation: 2.0,
+  );
+
   // In order to get hot reload to work we need to pause the camera if the platform
   // is android, or resume the camera if the platform is iOS.
   @override
@@ -46,20 +52,37 @@ class _QRScannerState extends State<QRScanner> {
               onQRViewCreated: _onQRViewCreated,
             ),
           ),
-          const Expanded(
+          Expanded(
               flex: 1,
               child: Center(
-                child: Text('Scan QR Code'),
-              )),
+                  child:_button()),
+          ),
         ],
       ),
     );
   }
 
+  Widget _button() {
+    if (result != null) {
+        return ElevatedButton(
+            style: buttonStyle,
+            onPressed: () {
+                Navigator.of(widget.context).pop<String>(result!.code);
+            }, 
+            child: const Text('return'),
+        );
+    } else {
+        return const  Text('Scan QR Code');
+    }
+  }
+        
+
   void _onQRViewCreated(QRViewController controller) {
     this.controller = controller;
     controller.scannedDataStream.listen((scanData) {
-        Navigator.of(widget.context).pop<String>(scanData.code);
+        setState(() {
+            result = scanData;
+        });
     });
   }
 

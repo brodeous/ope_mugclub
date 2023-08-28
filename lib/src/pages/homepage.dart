@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ope_mugclub/src/components/qr_scanner.dart';
 import 'package:ope_mugclub/src/components/styles/global_styles.dart';
-import 'dart:convert';
 import './new_member_page.dart';
 import './return_member_page.dart';
 import '../components/navigator.dart';
@@ -96,8 +95,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       future: _data,
                       builder: (context, snapshot) {
                           if (scanned) {
-                              if (snapshot.data['$qrCode'] != null) {
                                   Map<dynamic,dynamic> map = Map<dynamic,dynamic>.from(snapshot.data.value);
+                              if (map.containsKey('$qrCode')) {
                                       // Set button for returning member
                                       Map<dynamic, dynamic> data = map['$qrCode'];
                                       String name = data['first'];
@@ -137,7 +136,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                           ),
                                                       );
                                                   }, 
-                                                  child: Text('$qrCode'),
+                                                  child: const Text('Add Member'),
                                               ),
                                               ElevatedButton(
                                                   style: buttonStyle,
