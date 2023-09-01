@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_database/firebase_database.dart';
+import '../utils/firebase_methods.dart';
 import '../backend/server.dart';
 
 
-class _searchDelegate extends SearchDelegate<String> {
+class CustomSearchDelegate extends SearchDelegate {
 
-   _grabMembers() { 
-
-   }
   // first overwrite to
   // clear the search text
   @override
   List<Widget>? buildActions(BuildContext context) {
     return [
       IconButton(
-        onPressed: () {
+        onPressed: () async {
           query = '';
-          _grabMembers();
         },
         icon: const Icon(Icons.clear),
       ),
@@ -36,41 +34,67 @@ class _searchDelegate extends SearchDelegate<String> {
   // third overwrite to show query result
   @override
   Widget buildResults(BuildContext context) {
-    List<String> matchQuery = [];
-    for (var fruit in searchTerms) {
-      if (fruit.toLowerCase().contains(query.toLowerCase())) {
-        matchQuery.add(fruit);
-      }
-    }
-    return ListView.builder(
-      itemCount: matchQuery.length,
-      itemBuilder: (context, index) {
-        var result = matchQuery[index];
-        return ListTile(
-          title: Text(result),
-        );
-      },
-    );
+    return FutureBuilder<DataSnapshot>(
+        future: Server.database.get(),
+        builder: (context, snapshot) {
+            if (snapshot.hasData) {
+                List<String> matchQuery = [];
+                Map<dynamic, dynamic> members = Map<dynamic, dynamic>.from(snapshot.data?.value as Map<dynamic, dynamic>);
+                members.forEach((key, value) {
+                    final memberInfo = Map<dynamic, dynamic>.from(value);
+                    String memberName = memberInfo['first'] + memberInfo['last'];
+                    if (memberName.toLowerCase().contains(query.toLowerCase())) {
+                        matchQuery.add(memberName);
+                    }
+                } );
+                return ListView.builder(
+                    itemCount: matchQuery.length,
+                    itemBuilder: (context, index) {
+                        var result = matchQuery[index];
+                        return ListTile(
+                            title: Text(result),
+                        );
+                    },
+                );
+            } else if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+            } else {
+                return const CircularProgressIndicator();
+            }
+        });
   }
 
   // last overwrite to show the
   // querying process at the runtime
   @override
   Widget buildSuggestions(BuildContext context) {
-    List<String> matchQuery = [];
-    for (var fruit in searchTerms) {
-      if (fruit.toLowerCase().contains(query.toLowerCase())) {
-        matchQuery.add(fruit);
-      }
-    }
-    return ListView.builder(
-      itemCount: matchQuery.length,
-      itemBuilder: (context, index) {
-        var result = matchQuery[index];
-        return ListTile(
-          title: Text(result),
-        );
-      },
-    );
+    return FutureBuilder<DataSnapshot>(
+        future: Server.database.get(),
+        builder: (context, snapshot) {
+            if (snapshot.hasData) {
+                List<String> matchQuery = [];
+                Map<dynamic, dynamic> members = Map<dynamic, dynamic>.from(snapshot.data?.value as Map<dynamic, dynamic>);
+                members.forEach((key, value) {
+                    final memberInfo = Map<dynamic, dynamic>.from(value);
+                    String memberName = memberInfo['first'] + memberInfo['last'];
+                    if (memberName.toLowerCase().contains(query.toLowerCase())) {
+                        matchQuery.add(memberName);
+                    }
+                } );
+                return ListView.builder(
+                    itemCount: matchQuery.length,
+                    itemBuilder: (context, index) {
+                        var result = matchQuery[index];
+                        return ListTile(
+                            title: Text(result),
+                        );
+                    },
+                );
+            } else if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+            } else {
+                return const CircularProgressIndicator();
+            }
+        });
   }
 }

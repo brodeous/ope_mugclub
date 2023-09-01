@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:ope_mugclub/src/components/styles/global_styles.dart';
-import 'package:ope_mugclub/src/pages/member_list.dart';
 
 import '../backend/server.dart';
 

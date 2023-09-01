@@ -4,6 +4,7 @@ import 'package:ope_mugclub/src/components/styles/global_styles.dart';
 import './new_member_page.dart';
 import './return_member_page.dart';
 import '../components/navigator.dart';
+import '../components/member_search.dart';
 import '../backend/server.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -59,6 +60,17 @@ class _MyHomePageState extends State<MyHomePage> {
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
+        actions: [
+            IconButton(
+                onPressed: () {
+                    showSearch(
+                        context: context,
+                        delegate: CustomSearchDelegate()
+                        );
+                }, 
+                icon: const Icon(Icons.search),
+            )
+            ],
       ),
       body:  Center(
           child: Column(
