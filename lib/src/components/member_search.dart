@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-import '../utils/firebase_methods.dart';
+import '../pages/return_member_page.dart';
+import '../components/styles/global_styles.dart';
 import '../backend/server.dart';
 
 
@@ -38,13 +39,13 @@ class CustomSearchDelegate extends SearchDelegate {
         future: Server.database.get(),
         builder: (context, snapshot) {
             if (snapshot.hasData) {
-                List<String> matchQuery = [];
+                List<Map<dynamic, dynamic>> matchQuery = [];
                 Map<dynamic, dynamic> members = Map<dynamic, dynamic>.from(snapshot.data?.value as Map<dynamic, dynamic>);
                 members.forEach((key, value) {
                     final memberInfo = Map<dynamic, dynamic>.from(value);
                     String memberName = memberInfo['first'] + memberInfo['last'];
                     if (memberName.toLowerCase().contains(query.toLowerCase())) {
-                        matchQuery.add(memberName);
+                        matchQuery.add(memberInfo);
                     }
                 } );
                 return ListView.builder(
@@ -52,14 +53,31 @@ class CustomSearchDelegate extends SearchDelegate {
                     itemBuilder: (context, index) {
                         var result = matchQuery[index];
                         return ListTile(
-                            title: Text(result),
+                            minVerticalPadding: 5.0,
+                            title: Text(
+                                '${result['first']} ${result['last']}',
+                                style: Styles.secondaryHeader,
+                            ),
+                            trailing: Text(
+                                result['visits'],
+                                style: Styles.tileVisits,
+                            ),
+                            onTap: () {
+                                Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder:(context) => ReturnMemberPage(qrCode: '${result['qrCode']}'),
+                                    ),
+                                );
+                            }
                         );
                     },
                 );
             } else if (snapshot.hasError) {
                 return Text('Error: ${snapshot.error}');
             } else {
-                return const CircularProgressIndicator();
+                return const Center(
+                    child: CircularProgressIndicator()
+                );
             }
         });
   }
@@ -72,13 +90,13 @@ class CustomSearchDelegate extends SearchDelegate {
         future: Server.database.get(),
         builder: (context, snapshot) {
             if (snapshot.hasData) {
-                List<String> matchQuery = [];
+                List<Map<dynamic, dynamic>> matchQuery = [];
                 Map<dynamic, dynamic> members = Map<dynamic, dynamic>.from(snapshot.data?.value as Map<dynamic, dynamic>);
                 members.forEach((key, value) {
                     final memberInfo = Map<dynamic, dynamic>.from(value);
                     String memberName = memberInfo['first'] + memberInfo['last'];
                     if (memberName.toLowerCase().contains(query.toLowerCase())) {
-                        matchQuery.add(memberName);
+                        matchQuery.add(memberInfo);
                     }
                 } );
                 return ListView.builder(
@@ -86,14 +104,31 @@ class CustomSearchDelegate extends SearchDelegate {
                     itemBuilder: (context, index) {
                         var result = matchQuery[index];
                         return ListTile(
-                            title: Text(result),
+                            minVerticalPadding: 5.0,
+                            title: Text(
+                                '${result['first']} ${result['last']}',
+                                style: Styles.secondaryHeader,
+                            ),
+                            trailing: Text(
+                                result['visits'],
+                                style: Styles.tileVisits,
+                            ),
+                            onTap: () {
+                                Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder:(context) => ReturnMemberPage(qrCode: '${result['qrCode']}'),
+                                    ),
+                                );
+                            }
                         );
                     },
                 );
             } else if (snapshot.hasError) {
                 return Text('Error: ${snapshot.error}');
             } else {
-                return const CircularProgressIndicator();
+                return const Center(
+                    child: CircularProgressIndicator()
+                );
             }
         });
   }

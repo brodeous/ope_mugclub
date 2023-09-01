@@ -43,7 +43,7 @@ class ReturnMemberPage extends StatelessWidget {
                         return Text('Something went wrong! ${snapshot.error.toString()}');
                     } else if (snapshot.hasData) {
                         final info =
-                                snapshot.data!.snapshot.value as Map<Object?, dynamic>;
+                                snapshot.data.value as Map<Object?, dynamic>;
                         return _children(info, context);
                     } else {
                         return const Center(
