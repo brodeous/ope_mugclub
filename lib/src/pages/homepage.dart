@@ -116,7 +116,13 @@ class _MyHomePageState extends State<MyHomePage> {
                                           children: [
                                               ElevatedButton(
                                                   style: buttonStyle,
-                                                  onPressed:() {},
+                                                  onPressed:() {
+                                                      Navigator.of(context).push(
+                                                          MaterialPageRoute(
+                                                              builder:(context) => ReturnMemberPage(qrCode: '$qrCode', checkIn: true,),
+                                                          ),
+                                                      );
+                                                  },
                                                   child: Text('Check In $name'),
                                               ),
                                               ElevatedButton(

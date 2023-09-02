@@ -1,33 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:ope_mugclub/src/utils/firebase_methods.dart';
-import 'package:ope_mugclub/src/backend/server.dart';
 import '../components/styles/global_styles.dart';
 import '../backend/server.dart';
 
 class ReturnMemberPage extends StatelessWidget {
-  final String? qrCode;
+  final String qrCode;
+  final bool checkIn;
   const ReturnMemberPage(
-      {super.key, required this.qrCode});
+      {super.key, required this.qrCode, required this.checkIn});
 
   final String pageTitle = 'Returning Member';
 
-//  int visits = 0;
-//  String name = 'First Last';
-//  bool hasGrabed = false;
-  
-//    void initState() async{ 
-//       final visits = await Server.database.child('$qrCode').get();
-//       if (visits.exists) {
-//           final map = visits.value as Map<String, String>;
-//           Server.database.child('$qrCode').update({'visits' : '${int.parse('${map['visits']}') + 1}'});
-//       }
-//    }
-
   @override
   Widget build(BuildContext context) {
-  Future _data = Server.database.child('$qrCode').get();
-      
+  Future _data = Server.database.child(qrCode).get();
+  bool check = checkIn;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(pageTitle),
@@ -42,8 +30,17 @@ class ReturnMemberPage extends StatelessWidget {
                     if (snapshot.hasError) {
                         return Text('Something went wrong! ${snapshot.error.toString()}');
                     } else if (snapshot.hasData) {
-                        final info =
-                                snapshot.data.value as Map<Object?, dynamic>;
+                        final info = snapshot.data.value as Map<Object?, dynamic>;
+                        if (check) {
+                            int visits = int.parse(info['visits']) + 1;
+                            updateVisits(
+                                visits: visits,
+                                qrCode: qrCode,
+                                database: Server.database.child(qrCode),
+                            );
+                            check = false;
+                        }
+
                         return _children(info, context);
                     } else {
                         return const Center(

@@ -65,7 +65,7 @@ class CustomSearchDelegate extends SearchDelegate {
                             onTap: () {
                                 Navigator.of(context).push(
                                     MaterialPageRoute(
-                                        builder:(context) => ReturnMemberPage(qrCode: '${result['qrCode']}'),
+                                        builder:(context) => ReturnMemberPage(qrCode: '${result['qrCode']}', checkIn: false,),
                                     ),
                                 );
                             }
@@ -116,7 +116,7 @@ class CustomSearchDelegate extends SearchDelegate {
                             onTap: () {
                                 Navigator.of(context).push(
                                     MaterialPageRoute(
-                                        builder:(context) => ReturnMemberPage(qrCode: '${result['qrCode']}'),
+                                        builder:(context) => ReturnMemberPage(qrCode: '${result['qrCode']}', checkIn: false),
                                     ),
                                 );
                             }
