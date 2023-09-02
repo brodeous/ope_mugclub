@@ -4,7 +4,6 @@ import 'package:flutter/gestures.dart';
 import '../legal/legal.dart';
 import '../models/user.dart';
 import '../backend/server.dart';
-import './member_info_confirm_page.dart';
 
 class NewMemberPage extends StatefulWidget {
   final String qrCode;
