@@ -3,22 +3,34 @@ import 'package:ope_mugclub/src/utils/firebase_methods.dart';
 import '../components/styles/global_styles.dart';
 import '../backend/server.dart';
 
-class ReturnMemberPage extends StatelessWidget {
+class ReturnMemberPage extends StatefulWidget {
   final String qrCode;
   final bool checkIn;
   const ReturnMemberPage(
       {super.key, required this.qrCode, required this.checkIn});
 
   final String pageTitle = 'Returning Member';
+  @override
+  State<ReturnMemberPage> createState() => _ReturnPageState();
+}
+
+class _ReturnPageState extends State<ReturnMemberPage> {
+    Future? _data;
+    bool? check;
+
+  @override
+  void initState() {
+      super.initState();
+      _data = Server.database.child(widget.qrCode).get();
+      check = widget.checkIn;
+  }
 
   @override
   Widget build(BuildContext context) {
-  Future _data = Server.database.child(qrCode).get();
-  bool check = checkIn;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(pageTitle),
+        title: Text(widget.pageTitle),
         actions: const [
         ],
       ),
