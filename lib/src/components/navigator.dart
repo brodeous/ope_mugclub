@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ope_mugclub/src/components/styles/global_styles.dart';
 
 import '../backend/server.dart';
+import '../pages/about.dart';
 
 class NavBar extends StatelessWidget {
   const NavBar({super.key});
@@ -17,6 +18,11 @@ class NavBar extends StatelessWidget {
             child: InkWell(
               splashColor: Colors.teal.withAlpha(100),
               onTap: () {
+                  Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder:(context) => const AboutPage(),
+                      ),
+                  );
               },
               child: Container(
                 padding:
