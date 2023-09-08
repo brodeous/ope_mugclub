@@ -16,13 +16,14 @@ class ReturnMemberPage extends StatefulWidget {
 
 class _ReturnPageState extends State<ReturnMemberPage> {
     Future? _data;
-    bool? check;
+    Future? _grabVisit;
+    bool checkIn = false;
 
   @override
   void initState() {
       super.initState();
       _data = Server.database.child(widget.qrCode).get();
-      check = widget.checkIn;
+      _grabVisit = grabMemVisit(qrCode: widget.qrCode, checkIn: widget.checkIn);
   }
 
   @override
@@ -43,16 +44,6 @@ class _ReturnPageState extends State<ReturnMemberPage> {
                         return Text('Something went wrong! ${snapshot.error.toString()}');
                     } else if (snapshot.hasData) {
                         final info = snapshot.data.value as Map<Object?, dynamic>;
-                        if (check) {
-                            int visits = int.parse(info['visits']) + 1;
-                            updateVisits(
-                                visits: visits,
-                                qrCode: qrCode,
-                                database: Server.database.child(qrCode),
-                            );
-                            check = false;
-                        }
-
                         return _children(info, context);
                     } else {
                         return const Center(
@@ -66,7 +57,7 @@ class _ReturnPageState extends State<ReturnMemberPage> {
 }
 
 
-   Widget _children(snapshot, BuildContext context) {
+   Widget _children(info, BuildContext context) {
            return Column(
              mainAxisSize: MainAxisSize.min,
                children: <Widget> [
@@ -78,22 +69,30 @@ class _ReturnPageState extends State<ReturnMemberPage> {
                        style: Styles.primaryHeader,
                      ),
                    ),
-                   Container(
-                     width: MediaQuery.of(context).size.width * 0.85,
-                     alignment: Alignment.center,
-                     child: Container(
-                       alignment: Alignment.center,
-                       decoration: BoxDecoration(
-                         color: Colors.green,
-                         borderRadius: BorderRadius.circular(10),
-                       ),
-                       width: 100,
-                       child: Text(
-                         snapshot['visits'],
-                         style: Styles.displayVisits,
-                       ),
-                     ),
-                   ),
+                   FutureBuilder(
+                       future: _grabVisit,
+                       builder: (context, snapshot) {
+                           if (snapshot.hasData) {
+                           return Container(
+                               width: MediaQuery.of(context).size.width * 0.85,
+                               alignment: Alignment.center,
+                               child: Container(
+                                   alignment: Alignment.center,
+                                   decoration: BoxDecoration(
+                                       color: Colors.green,
+                                       borderRadius: BorderRadius.circular(10),
+                                   ),
+                                   width: 100,
+                                   child: Text(
+                                       '${snapshot.data}',
+                                       style: Styles.displayVisits,
+                                   ),
+                               ),
+                           );
+                           } else {
+                               return const CircularProgressIndicator();
+                           }
+                     }),
                    Container(
                      width: MediaQuery.of(context).size.width * 0.85,
                      padding: const EdgeInsets.symmetric(
@@ -101,7 +100,7 @@ class _ReturnPageState extends State<ReturnMemberPage> {
                      ),
                      alignment: Alignment.centerLeft,
                      child: Text(
-                       '${snapshot['first']} ${snapshot['last']}',
+                       '${info['first']} ${info['last']}',
                        style: Styles.primaryHeader,
                      ),
                    ),
@@ -109,7 +108,7 @@ class _ReturnPageState extends State<ReturnMemberPage> {
                      width: MediaQuery.of(context).size.width * 0.85,
                      alignment: Alignment.centerRight,
                      child: Text(
-                       snapshot['email'],
+                       info['email'],
                        style: Styles.secondaryHeader,
                      ),
                    ),
@@ -117,7 +116,7 @@ class _ReturnPageState extends State<ReturnMemberPage> {
                      width: MediaQuery.of(context).size.width * 0.85,
                      alignment: Alignment.centerRight,
                      child: Text(
-                       snapshot['phone'],
+                       info['phone'],
                        style: Styles.secondaryHeader,
                      ),
                    ),
