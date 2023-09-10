@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../legal/legal.dart';
 import '../models/user.dart';
@@ -17,6 +18,7 @@ class NewMemberPage extends StatefulWidget {
 class _NewMemberPageState extends State<NewMemberPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final String pageTitle = 'New Member';
+  final Uri _url = Uri.parse('https://app.termly.io/document/privacy-policy/df56a474-b295-4655-8c50-6332ed8dfde1');
   User user = User();
   int state = 1;
   bool confirm = false;
@@ -272,19 +274,13 @@ class _NewMemberPageState extends State<NewMemberPage> {
               children: <TextSpan>[
                   const TextSpan(text: 'By clicking Sign Up, you agree to our '),
                   TextSpan(
-                      text: 'Terms of Service',
-                      style: linkStyle,
-                      recognizer: TapGestureRecognizer()
-                      ..onTap = () {
-                          Terms(context);
-                      }),
-                  const TextSpan(text: ' and that you have read our '),
-                  TextSpan(
                       text: 'Privacy Policy',
                       style: linkStyle,
                       recognizer: TapGestureRecognizer()
-                      ..onTap = () {
-                          Privacy(context);
+                      ..onTap = () async {
+                        if (!await launchUrl(_url)) {
+                            throw Exception('Could not launch $_url');
+                        }
                       }),
               ],
           ),
