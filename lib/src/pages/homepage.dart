@@ -40,7 +40,6 @@ class _MyHomePageState extends State<MyHomePage> {
     @override
     void initState() {
         super.initState();
-        qrCode = 'null';
         _data = Server.database.get();
     }
 
@@ -106,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   return FutureBuilder(
                       future: _data,
                       builder: (context, snapshot) {
-                          if (scanned) {
+                          if (scanned && qrCode != null) {
                                   Map<dynamic,dynamic> map = Map<dynamic,dynamic>.from(snapshot.data.value);
                               if (map.containsKey('$qrCode')) {
                                       // Set button for returning member
