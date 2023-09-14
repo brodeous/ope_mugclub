@@ -6,8 +6,10 @@ import 'package:ope_mugclub/src/backend/server.dart';
 
 
 void updateVisitData({required int visits, required String qrCode, required DatabaseReference database}) {
+    DateTime time = DateTime.now();
     database.update({
         "$qrCode/visits" : '$visits',
+        "$qrCode/time" : '$time',
     }).then((_) => debugPrint('visits updated'))
     .catchError((error) => debugPrint('visits update error! $error'));
 }
