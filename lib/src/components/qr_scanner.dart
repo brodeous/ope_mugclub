@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -69,7 +68,7 @@ class _QRScannerState extends State<QRScanner> {
             onPressed: () {
                 Navigator.of(widget.context).pop<String>(result!.code);
             }, 
-            child: Text('${result!.code}'),
+            child: const Text('return'),
         );
     } else {
         return const  Text('Scan QR Code');
