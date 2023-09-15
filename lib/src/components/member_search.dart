@@ -43,7 +43,7 @@ class CustomSearchDelegate extends SearchDelegate {
                 Map<dynamic, dynamic> members = Map<dynamic, dynamic>.from(snapshot.data?.value as Map<dynamic, dynamic>);
                 members.forEach((key, value) {
                     final memberInfo = Map<dynamic, dynamic>.from(value);
-                    String memberName = memberInfo['first'] + memberInfo['last'];
+                    String memberName = '${memberInfo['first']} ${memberInfo['last']}';
                     if (memberName.toLowerCase().contains(query.toLowerCase())) {
                         matchQuery.add(memberInfo);
                     }
@@ -94,7 +94,7 @@ class CustomSearchDelegate extends SearchDelegate {
                 Map<dynamic, dynamic> members = Map<dynamic, dynamic>.from(snapshot.data?.value as Map<dynamic, dynamic>);
                 members.forEach((key, value) {
                     final memberInfo = Map<dynamic, dynamic>.from(value);
-                    String memberName = memberInfo['first'] + memberInfo['last'];
+                    String memberName = '${memberInfo['first']} ${memberInfo['last']}';
                     if (memberName.toLowerCase().contains(query.toLowerCase())) {
                         matchQuery.add(memberInfo);
                     }
