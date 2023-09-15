@@ -201,7 +201,7 @@ class _NewMemberPageState extends State<NewMemberPage> {
                           loading = isLoading;
                       });
 
-                      isLoading = await _addUser(user);
+                      isLoading = !(await _addUser(user));
 
                       setState(() {
                           loading = isLoading;
