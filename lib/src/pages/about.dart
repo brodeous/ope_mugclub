@@ -2,9 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class AboutPage extends StatelessWidget {
+class AboutPage extends StatefulWidget {
 
-    AboutPage({super.key});
+    const AboutPage({super.key});
+
+    @override
+    State<AboutPage> createState() => _AboutPageState();
+}
+
+class _AboutPageState extends State<AboutPage> {
     final Uri _url = Uri.parse('https://app.termly.io/document/privacy-policy/df56a474-b295-4655-8c50-6332ed8dfde1');
     final TextStyle linkStyle = const TextStyle(color: Colors.blue, fontSize: 24.0);
 
