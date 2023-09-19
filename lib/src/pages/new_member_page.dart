@@ -97,7 +97,7 @@ class _NewMemberPageState extends State<NewMemberPage> {
                             return 'Please Enter a Name';
                           } else {
                             user.setFirst(
-                                first: val);
+                                first: val[0].toUpperCase() + val.substring(1, val.length));
                             return null;
                           }
                         },
@@ -123,7 +123,7 @@ class _NewMemberPageState extends State<NewMemberPage> {
                             return 'Please Enter a Name';
                           } else {
                             user.setLast(
-                                last: val);
+                                last: val[0].toUpperCase() + val.substring(1, val.length));
                             return null;
                           }
                         },
