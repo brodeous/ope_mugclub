@@ -68,7 +68,7 @@ class _QRScannerState extends State<QRScanner> {
             onPressed: () {
                 Navigator.of(widget.context).pop<String>(result!.code);
             }, 
-            child: const Text('return'),
+            child: const Text('Return'),
         );
     } else {
         return const  Text('Scan QR Code');
