@@ -1,16 +1,11 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:ope_mugclub/src/pages/new_member_page.dart';
-import 'package:ope_mugclub/src/pages/return_member_page.dart';
-import 'package:ope_mugclub/src/utils/firebase_methods.dart';
-import 'package:ope_mugclub/src/backend/server.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
-import 'package:firebase_database/firebase_database.dart';
 
 class QRScanner extends StatefulWidget {
-  const QRScanner({super.key});
+    final BuildContext context;
+  const QRScanner({super.key, required this.context});
 
   @override
   State<QRScanner> createState() => _QRScannerState();
@@ -20,6 +15,12 @@ class _QRScannerState extends State<QRScanner> {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   Barcode? result;
   QRViewController? controller;
+
+  final ButtonStyle buttonStyle = ElevatedButton.styleFrom(
+    textStyle: const TextStyle(fontSize: 18),
+    fixedSize: const Size.fromWidth(100),
+    elevation: 2.0,
+  );
 
   // In order to get hot reload to work we need to pause the camera if the platform
   // is android, or resume the camera if the platform is iOS.
@@ -50,20 +51,37 @@ class _QRScannerState extends State<QRScanner> {
               onQRViewCreated: _onQRViewCreated,
             ),
           ),
-          const Expanded(
+          Expanded(
               flex: 1,
               child: Center(
-                child: Text('Scan QR Code'),
-              )),
+                  child:_button()),
+          ),
         ],
       ),
     );
   }
 
+  Widget _button() {
+    if (result != null) {
+        return ElevatedButton(
+            style: buttonStyle,
+            onPressed: () {
+                Navigator.of(widget.context).pop<String>(result!.code);
+            }, 
+            child: const Text('Return'),
+        );
+    } else {
+        return const  Text('Scan QR Code');
+    }
+  }
+        
+
   void _onQRViewCreated(QRViewController controller) {
     this.controller = controller;
     controller.scannedDataStream.listen((scanData) {
-        Navigator.of(context).pop(scanData.code);
+        setState(() {
+            result = scanData;
+        });
     });
   }
 

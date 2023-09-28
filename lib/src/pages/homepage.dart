@@ -4,10 +4,11 @@ import 'package:ope_mugclub/src/components/styles/global_styles.dart';
 import './new_member_page.dart';
 import './return_member_page.dart';
 import '../components/navigator.dart';
+import '../components/member_search.dart';
 import '../backend/server.dart';
 
-class MyHomePage extends StatelessWidget {
-    MyHomePage({super.key});
+class MyHomePage extends StatefulWidget {
+    const MyHomePage({super.key});
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -19,12 +20,16 @@ class MyHomePage extends StatelessWidget {
   // always marked "final".
 
   final String title = 'OPE Mug Club';
+  @override
+    State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
 
   // final double buttonWidth = 200;
     Future? _data;
     String? qrCode;
     bool scanned = false;
-    bool returnMember = false;
 
   final ButtonStyle buttonStyle = ElevatedButton.styleFrom(
     textStyle: const TextStyle(fontSize: 18),
@@ -35,6 +40,7 @@ class MyHomePage extends StatelessWidget {
     @override
     void initState() {
         super.initState();
+        qrCode = 'null';
         _data = Server.database.get();
     }
 
@@ -53,7 +59,18 @@ class MyHomePage extends StatelessWidget {
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text(title),
+        title: Text(widget.title),
+        actions: [
+            IconButton(
+                onPressed: () {
+                    showSearch(
+                        context: context,
+                        delegate: CustomSearchDelegate()
+                        );
+                }, 
+                icon: const Icon(Icons.search),
+            )
+            ],
       ),
       body:  Center(
           child: Column(
@@ -83,27 +100,29 @@ class MyHomePage extends StatelessWidget {
                     ),
                   ],
                 ),
-              ],
-            ),
-          ),
+              ),
           Builder(
               builder: (BuildContext context) {
-                  if (scanned) {
-                          return FutureBuilder(
-                            future: _data,
-                            builder: (context, snapshot) {
-                                if (snapshot.hasData) {
-                                    Map<dynamic, dynamic> map = snapshot.data.value as Map<dynamic, dynamic>;
-                                  if (map.containsKey('$qrCode')) {
-
+                  return FutureBuilder(
+                      future: _data,
+                      builder: (context, snapshot) {
+                          if (scanned && qrCode != null) {
+                                  Map<dynamic,dynamic> map = Map<dynamic,dynamic>.from(snapshot.data.value);
+                              if (map.containsKey('$qrCode')) {
                                       // Set button for returning member
-                                      Map<dynamic, dynamic> data = map[qrCode];
+                                      Map<dynamic, dynamic> data = map['$qrCode'];
                                       String name = data['first'];
                                       return Column(
                                           children: [
                                               ElevatedButton(
                                                   style: buttonStyle,
-                                                  onPressed:() {},
+                                                  onPressed:() {
+                                                      Navigator.of(context).push(
+                                                          MaterialPageRoute(
+                                                              builder:(context) => ReturnMemberPage(qrCode: '$qrCode', checkIn: true,),
+                                                          ),
+                                                      );
+                                                  },
                                                   child: Text('Check In $name'),
                                               ),
                                               ElevatedButton(
@@ -111,7 +130,7 @@ class MyHomePage extends StatelessWidget {
                                                   onPressed: () async {
                                                       qrCode = await Navigator.of(context).push(
                                                           MaterialPageRoute<String>(
-                                                              builder: (context) => const QRScanner(),
+                                                              builder: (context) => QRScanner(context: context),
                                                           ),
                                                       );
 
@@ -128,54 +147,53 @@ class MyHomePage extends StatelessWidget {
                                           children: [
                                               ElevatedButton(
                                                   style: buttonStyle,
-                                                      onPressed: () {}, 
-                                                      child: Text('$qrCode'),
-                                                  ),
+                                                  onPressed: () {
+                                                      Navigator.of(context).push(
+                                                          MaterialPageRoute(
+                                                              builder:(context) => NewMemberPage(qrCode: '$qrCode'),
+                                                          ),
+                                                      );
+                                                  }, 
+                                                  child: const Text('Add Member'),
+                                              ),
                                               ElevatedButton(
                                                   style: buttonStyle,
                                                   onPressed: () async {
                                                       qrCode = await Navigator.of(context).push(
                                                           MaterialPageRoute<String>(
-                                                              builder: (context) => const QRScanner(),
+                                                              builder: (context) => QRScanner(context: context),
                                                           ),
                                                       );
 
                                                       // Update page state
                                                       _updateHome(qrCode);
-                                                    },
-                                                    child: const Text('Scan Again')
+                                                  },
+                                                  child: const Text('Scan Again')
                                               ),
-                                          ]);
+                                              ]);
                                   }
-                                } else {
-                                    return const CircularProgressIndicator();
-                                }
-                            }
-                            );
-                      } else if (returnMember) {
-                          return ElevatedButton(
-                            style: buttonStyle,
-                            onPressed:() {},
-                            child: const Text('Returning Member'),);
-                } else {
-                  return ElevatedButton(
-                    style: buttonStyle,
-                    onPressed: () async {
-                      qrCode = await Navigator.of(context).push(
-                        MaterialPageRoute<String>(
-                            builder: (context) => const QRScanner(),
-                        ),
-                    );
+                          } else {
+                              return ElevatedButton(
+                                  style: buttonStyle,
+                                  onPressed: () async {
+                                      qrCode = await Navigator.of(context).push(
+                                          MaterialPageRoute<String>(
+                                              builder: (context) => QRScanner(context: context),
+                                          ),
+                                      );
 
-                      // Update page state
-                      _updateHome(qrCode);
-                    },
-                    child: const Text('Scan QrCode'),
+                                      // Update page state
+                                      _updateHome(qrCode);
+                                  },
+                                  child: const Text('Scan QrCode'),
+                              );
+                          }
+                      }
                   );
-                  }
               },
-              ),
-        ],
+          ),
+          ],
+      ),
       ),
     );
   }
@@ -186,9 +204,5 @@ class MyHomePage extends StatelessWidget {
         qrCode = bcode;
     });
 }
-
-  //bool _checkDuplicate(Barcode? bcode) {
-      //return exists;
-  //}
-
 }
+
